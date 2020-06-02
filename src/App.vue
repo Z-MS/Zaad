@@ -2,13 +2,33 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/todo">Todos</router-link>
     </div>
     <router-view/>
   </div>
 </template>
 
 <style lang="scss">
+:root {
+    --success: rgb(17, 204, 17);
+    --danger: red;
+}
+
+button {
+    border-width: 0px;
+    margin: 5px;
+    color: beige;
+    font-size: 1.2rem;
+}
+
+.success  {
+    background-color: var(--success);
+}
+
+.danger {
+    background-color: var(--danger);
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -19,7 +39,7 @@
 
 #nav {
   padding: 30px;
-
+  font-size: 1.25rem;
   a {
     font-weight: bold;
     color: #2c3e50;
