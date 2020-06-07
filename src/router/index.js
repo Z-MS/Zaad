@@ -2,6 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import TodoList from '../components/Todo/TodoList.vue'
+import NoteList from '../components/Notes/NoteList.vue'
+import NoteContent from '../components/Notes/NoteContent.vue'
+import EditNote from '../components/Notes/EditNote.vue'
 
 Vue.use(VueRouter)
 
@@ -20,9 +23,26 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: '/todo',
-    name: 'Todo',
+    path: '/todos',
+    name: 'Todos',
     component: TodoList
+  },
+  {
+    path: '/notes',
+    name: 'Notes',
+    component: NoteList
+  },
+  {
+    path: '/notes/:id',
+    name: 'NoteContent',
+    component: NoteContent,
+    props: true
+  },
+  {
+    path: '/notesEd/:id',
+    name: 'EditNote',
+    component: EditNote,
+    props: true
   }
 ]
 

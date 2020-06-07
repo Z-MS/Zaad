@@ -39,14 +39,14 @@ export default {
         toggleTodo: function(id) {
             this.$store.dispatch("toggleTodo", id);
         } */,
-        deleteTodo: function(id) {
+        deleteTodo(id) {
             this.$store.dispatch("deleteTodo", id);
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
 .container {
     width: 30rem;
     margin: auto;

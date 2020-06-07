@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import todos from './todos'
+import notes from './notes'
 
 Vue.use(Vuex)
 
@@ -10,6 +11,7 @@ export default new Vuex.Store({
     mutations: {},
     actions: {},
     modules: {
-        todos: todos
+        todos: todos,
+        notes: notes
     }
 })

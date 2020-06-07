@@ -2,7 +2,8 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/todo">Todos</router-link>
+      <router-link to="/todos">Todos</router-link> |
+      <router-link to="/notes">Notes</router-link>
     </div>
     <router-view/>
   </div>
@@ -12,6 +13,7 @@
 :root {
     --success: rgb(17, 204, 17);
     --danger: red;
+    --change: royalblue; 
 }
 
 button {
@@ -27,6 +29,10 @@ button {
 
 .danger {
     background-color: var(--danger);
+}
+
+.change {
+    background-color: var(--change);
 }
 
 #app {
