@@ -1,17 +1,25 @@
 <template>
     <div>
-        <button class="success" @click="saveChanges">Done</button>
-        <button class="danger" @click="cancel">Cancel</button>
-        <textarea rows="30" cols="150" v-model="newText"/>
+        <form @submit.prevent="saveChanges">
+            <button class="success" type="submit">Done</button>
+            <button class="danger" type="button" @click="close">Cancel</button>
+            <resizable-text>
+                <textarea cols="150" v-model="newText"/>
+            </resizable-text>
+        </form>
     </div>
 </template>
 
 <script>
-// TODO: EDIT NOTE, DATE & TIME STUFF, NOTE CONTENT STYLING, STORAGE
+import ResizableText from '../ResizableText'
+
 export default {
     props: {
         text: { type: String },
         id: { type: String, required: true }
+    },
+    components: {
+        ResizableText
     },
     computed: {
         newText: {
@@ -19,16 +27,16 @@ export default {
                 return this.text
             },
             set(value) {
-                console.log(value)
+                this.$store.dispatch("editNote", { text: value, id: this.id })
             }
         }
     },
     methods: {
-        saveChanges() {
+        close() {
             this.$router.push({name: 'Notes'});
         },
-        cancel() {
-            this.$router.push({name: 'Notes'});
+        saveChanges() {
+            this.close();
         }
     }
 }
@@ -49,6 +57,8 @@ textarea {
     max-width: 90%;
     display: block;
     margin-left: 5%;
-    font-size: 1.3rem;
+    color: black;
+	resize: none;
+	font-size: 1.5rem;
 }
 </style>

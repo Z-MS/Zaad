@@ -1,7 +1,11 @@
 <template>
     <div>
-      <span v-if="!isEditing" class="task" :class="{completed: completed}" @click="toggleTodo(id)"> {{ task }}</span> <button class="change" @click="toggleEdit" v-if="!isEditing">Edit</button>
-      <edit-todo :todo-text="task" :id="id" v-else @close-edit="toggleEdit"/>
+        <span v-if="!isEditing" class="task" :class="{completed: completed}">
+            <p @click="toggleTodo(id)">{{ task }}</p>
+            <button class="change" @click="toggleEdit">Edit</button>
+        </span> 
+      
+        <edit-todo :todo-text="task" :id="id" v-else @close-edit="toggleEdit"/>
     </div>
 </template>
 
@@ -51,5 +55,9 @@ export default {
     color: #555;
 }
 
+
+p {
+    display: inline;
+}
 
 </style>

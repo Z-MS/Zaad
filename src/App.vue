@@ -10,17 +10,24 @@
 </template>
 
 <style lang="scss">
+
 :root {
     --success: rgb(17, 204, 17);
     --danger: red;
     --change: royalblue; 
 }
 
+body {
+	background: linear-gradient(45deg, #6cfd9f, #6887ff);
+	min-height: 100vh;
+	overflow: auto;
+}
+
 button {
     border-width: 0px;
     margin: 5px;
     color: beige;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
 }
 
 .success  {
@@ -51,7 +58,7 @@ button {
     color: #2c3e50;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: beige;
     }
   }
 }

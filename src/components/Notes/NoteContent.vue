@@ -3,7 +3,7 @@
         <div id="reading" v-if="!isEditing">
             <button class="change" @click="toggleEdit">Edit</button>
             <button class="danger" @click="deleteNote(id)">Delete</button>
-            <p> {{ note.noteText }} </p>
+            <p @click="toggleEdit"> {{ note.noteText }} </p>
         </div>
         <edit-note v-else :text="note.noteText" :id="id"/>
     </div>
@@ -51,8 +51,9 @@ p {
 }
 
 #reading {
-    border-radius: 0.5rem;
+    border-radius: 0.2rem;
     box-shadow: 0 0 2rem rgba(0, 0, 0, 0.25);
+    background-color: white;
     padding-left: 1rem; 
 }
 </style>

@@ -5,6 +5,7 @@ import TodoList from '../components/Todo/TodoList.vue'
 import NoteList from '../components/Notes/NoteList.vue'
 import NoteContent from '../components/Notes/NoteContent.vue'
 import EditNote from '../components/Notes/EditNote.vue'
+import ProjectPage from '../components/ProjectPage.vue'
 
 Vue.use(VueRouter)
 
@@ -43,6 +44,11 @@ Vue.use(VueRouter)
     name: 'EditNote',
     component: EditNote,
     props: true
+  },
+  {
+    path: '/project',
+    name: 'Project',
+    component: ProjectPage
   }
 ]
 

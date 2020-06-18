@@ -1,18 +1,20 @@
 <template>
     <div class="container">
         <form @submit.prevent="addTodo">
-          <input class="todo-input" type="text" placeholder="Enter a new task" v-model="task"/>
-      </form>
+            <input class="todo-input" type="text" placeholder="Enter a new task" v-model="task"/>
+        </form>
         <ul>
             <li v-for="todo in todos"  :key="todo.id"  @dblclick="deleteTodo(todo.id)">
                 <todo-item :task="todo.task" :completed="todo.completed" :id="todo.id"/>
             </li>
         </ul>
+        <!-- <p> {{ dato }} </p> -->
     </div>
 </template>
 
 <script>
 import TodoItem from './TodoItem';
+
 
 export default {
     data: () => ({
@@ -27,7 +29,6 @@ export default {
         todos() {
             return this.$store.getters.getTodos
         }
-
     },
     methods: {
         addTodo() {
@@ -48,7 +49,7 @@ export default {
 
 <style scoped>
 .container {
-    width: 30rem;
+    width: 50rem;
     margin: auto;
     background-color: white;
     border-radius: 0.5rem;
@@ -75,6 +76,6 @@ export default {
 li {
     list-style: none;
     border-bottom: 1px solid rgba(195, 195, 195, 0.5);
-    font-size: 1.20rem;
+    font-size: 1.25rem;
 }
 </style>
