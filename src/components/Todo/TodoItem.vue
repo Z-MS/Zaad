@@ -2,6 +2,7 @@
     <div>
         <span v-if="!isEditing" class="task" :class="{completed: completed}">
             <p @click="toggleTodo(id)">{{ task }}</p>
+            <!-- <input type="checkbox"/> -->
             <button class="change" @click="toggleEdit">Edit</button>
         </span> 
       
@@ -22,7 +23,7 @@ export default {
     }),
     props: {
         task: { required: true, type: String },
-        id: { required: true, type: Number },
+        id: { required: true, type: String },
         completed: { required: true, type: Boolean }
     },
     methods: {

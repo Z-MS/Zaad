@@ -1,10 +1,10 @@
 <template>
-	<div>
+	<div class="note-container">
 		<div id="regular" v-if="!isNew">
 			<button class="success" @click="toggleNew">Create a new note</button>
 			<ul>
 				<li v-for="note in notes" :key="note.id">
-					<p><router-link :to="`notes/${note.id}`">{{ note.excerpt }}</router-link></p>
+					<p><router-link :to="`note/${note.id}`">{{ note.excerpt }}</router-link></p>
 					<small>{{ note.date }}</small>
 				</li>
 			</ul>
@@ -61,6 +61,9 @@ export default {
 </script>
 
 <style scoped>
+.note-container {
+	margin-left: 30%;
+}
 li {
     list-style: none;
     border-bottom: 1px solid rgba(195, 195, 195, 0.5);
@@ -69,16 +72,17 @@ li {
 
 textarea {
     box-sizing: border-box;
-    max-width: 90%;
     display: block;
-    margin-left: 5%;
+    width: 85%;
+    margin-left: 10%;
     color: black;
 	resize: none;
 	font-size: 1.5rem;
 }
 
 #regular {
-	width: 50rem;
+	
+	width: 95%;
     margin: auto;
     background-color: white;
     border-radius: 0.5rem;
@@ -94,6 +98,6 @@ p {
 
 small {
 	position: absolute;
-	left: 70%;
+	left: 85%;
 }
 </style>

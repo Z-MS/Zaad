@@ -22,17 +22,24 @@ export default {
         newId: 3,
         completed: false,
     }),
+    props: {
+        methodList: { type: Object,  required: false }
+    },
     components: {
         TodoItem
     },
     computed: {
         todos() {
-            return this.$store.getters.getTodos
+            var dataStore = this.$store.getters.getTodos;
+            if(this.methodList) {
+                dataStore = this.$store.getters[this.methodList.dataGetter]
+            }
+            return dataStore
         }
     },
     methods: {
         addTodo() {
-            this.$store.dispatch("addTodo", this);
+            this.$store.dispatch("addTodo", { newId: String(this.newId), task: this.task, completed: this.completed });
             this.newId++;
             this.task = "";
             this.completed = false;
@@ -48,9 +55,13 @@ export default {
 </script>
 
 <style scoped>
+* {
+    box-sizing: border-box;
+}
+
 .container {
-    width: 50rem;
-    margin: auto;
+    width: 65%;
+    margin-left: 33%;
     background-color: white;
     border-radius: 0.5rem;
     padding: 1rem;

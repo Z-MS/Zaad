@@ -5,7 +5,9 @@ import TodoList from '../components/Todo/TodoList.vue'
 import NoteList from '../components/Notes/NoteList.vue'
 import NoteContent from '../components/Notes/NoteContent.vue'
 import EditNote from '../components/Notes/EditNote.vue'
-import ProjectPage from '../components/ProjectPage.vue'
+import ProjectList from '../components/Projects/ProjectList.vue'
+import ProjectPage from '../components/Projects/ProjectPage.vue'
+import TaskPage from '../components/Projects/TaskPage.vue'
 
 Vue.use(VueRouter)
 
@@ -34,7 +36,7 @@ Vue.use(VueRouter)
     component: NoteList
   },
   {
-    path: '/notes/:id',
+    path: '/note/:id',
     name: 'NoteContent',
     component: NoteContent,
     props: true
@@ -46,9 +48,21 @@ Vue.use(VueRouter)
     props: true
   },
   {
-    path: '/project',
-    name: 'Project',
-    component: ProjectPage
+    path: '/projects',
+    name: 'Projects',
+    component: ProjectList
+  },
+  {
+    path: '/project/:id',
+    name: 'ProjectPage',
+    component: ProjectPage,
+    props: true
+  },
+  {
+    path: '/task/:id',
+    name: 'TaskPage',
+    component: TaskPage,
+    props: true
   }
 ]
 

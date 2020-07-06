@@ -54,9 +54,10 @@ a {
 
 textarea {
     box-sizing: border-box;
-    max-width: 90%;
+    /* max-width: 90%; */
+    width: 60%;
+    margin-left: 35%;
     display: block;
-    margin-left: 5%;
     color: black;
 	resize: none;
 	font-size: 1.5rem;

@@ -55,5 +55,9 @@ p {
     box-shadow: 0 0 2rem rgba(0, 0, 0, 0.25);
     background-color: white;
     padding-left: 1rem; 
+    width: 65%;
+    margin-left: 35%;
 }
+
+
 </style>

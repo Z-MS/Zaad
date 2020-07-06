@@ -2,12 +2,12 @@ export default {
     state: {
         todos: [
           {
-            id: 0,
+            id: '0',
             task: "Buy food",
             completed: false
           },
           {
-            id: 1,
+            id: '1',
             task: "Eat beans",
             completed: false
           }
