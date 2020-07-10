@@ -5,7 +5,7 @@
 			<ul>
 				<li v-for="note in notes" :key="note.id">
 					<p><router-link :to="`note/${note.id}`">{{ note.excerpt }}</router-link></p>
-					<small>{{ note.date }}</small>
+					<small @click="saveToDb">{{ note.date }}</small>
 				</li>
 			</ul>
 		</div>
@@ -23,7 +23,7 @@
 
 <script>
 import ResizableText from '../ResizableText'
-// import DateTime from '../../utils/DateTime';
+import db from '@/db/db'
 
 export default {
 	data: () => ({
@@ -38,6 +38,8 @@ export default {
 		notes() {
 			// returns an array of objects
 			return this.$store.getters.getNotes
+			
+			// return db.getNotes()
 		}
 	},
 	methods: {
@@ -54,6 +56,11 @@ export default {
 		},
 		cancel() {
 			this.toggleNew();
+		},
+		async saveToDb() {
+			db.saveNotes(this.notes);
+			var stuff = await db.getNotes();
+			console.log(stuff);
 		}
 	}
 

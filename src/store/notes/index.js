@@ -7,7 +7,7 @@ export default {
         notes: [
             {
                 id: '0',
-                noteText: "Beans is delicious",
+                noteText: "Fries is delicious",
                 excerpt: "Beans is...",
                 date: "12-3-2019"
             },
