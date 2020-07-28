@@ -1,4 +1,6 @@
 import Find from '../../utils/find'
+import db from '../../db/db';
+import DateTime from '../../utils/DateTime';
 
 export default {
     state: {
@@ -97,22 +99,22 @@ export default {
       },
       mutations: {
 // Since tasks and subtasks are very similar and are coupled together, put their functionalities in the same function for now
-        ADD_TASK: (state, payload) => {
-            
+        async ADD_TASK(state, payload) {
+            var [currentDate] = DateTime.getDateTime();
             var newTask = {
-                id: payload.newId,
                 name: payload.name,
                 completed: false,
-                dateCreated: payload.date,
+                dateCreated: currentDate,
                 completionDate: '',
                 subtasks: payload.subtasks  // should be an array of objects
             }
     
-            state.tasks.push(newTask)
+            await db.addItem('Tasks', newTask);
         },
-        EDIT_TASK(state, {text, id /* task name or task note */}) {
-            var item = Find.findItem(state.tasks, id);//state.tasks.find(elem => elem.id === id);
-            item.name = text;
+        async EDIT_TASK(state, payload) {
+            await db.editItem('Tasks', payload.id, (data) => {
+                data.name = payload.text;
+            });
         },
         EDIT_SUBTASK(state, {text, subTaskId, taskId}) {
             var parentTask = Find.findItem(state.tasks, taskId);// state.tasks.find(elem => elem.id === taskId);
@@ -124,9 +126,8 @@ export default {
             var subtask = Find.findItem(parentTask.subtasks, subTaskId);
             subtask.completed = !subtask.completed;
         },
-        DELETE_TASK(state, {id}){
-            var index = state.tasks.findIndex(elem => elem.id === id);
-            state.tasks.splice(index, 1);
+        async DELETE_TASK(state, {id}) {
+            await db.deleteItem('Tasks', id);
         },
         DELETE_SUBTASK(state, {subTaskId, taskId}) {
             var parentTask = Find.findItem(state.tasks, taskId);
@@ -153,6 +154,10 @@ export default {
             },
             deleteSubtask: (context, payload) => {
                 context.commit("DELETE_SUBTASK", payload)
+            },
+            async getTasksFromDB(context) {
+                var tasks = await db.getItems('Tasks');
+                context.state.tasks = tasks;
             }
 
       }

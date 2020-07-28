@@ -1,4 +1,6 @@
 import find from '../../utils/find'
+import DateTime from '../../utils/DateTime';
+import db from '../../db/db'
 
 export default {
     state: {
@@ -39,7 +41,8 @@ export default {
         }
     },
     mutations: {
-        ADD_PROJECT: (state, payload) => {
+        async ADD_PROJECT(state, payload) {
+            var [currentDate] = DateTime.getDateTime();
             var newProject = {
                 id: payload.id, // constant
                 name: payload.projectName, // editable
@@ -47,16 +50,16 @@ export default {
                 notes: payload.notes, // editable
                 completed: false, // toggleable
                 dates: {
-                    startDate: "06-4-2020", // constant
+                    startDate: currentDate, // constant
                     expCompletionDate: "TBD" // editable if completionStatus is false - of true, template should display 'Completion date' instead of 'Expected comp...'
                 },
                 images: payload.images, // editable
                 taskIDs: payload.tasks/* Array of task IDs */ // editable
             }
 
-            state.projects.push(newProject);
+            await db.addItem('Projects', newProject);
         },
-        EDIT_PROJECT: (state, payload) => {
+        EDIT_PROJECT(state, payload) {
             // project name, description,notes
             var project = find.findItem(state.projects, payload.id);
             switch(payload.field) {
@@ -70,11 +73,10 @@ export default {
                     project.notes = payload.content;
             }
         },
-        DELETE_PROJECT: (state, payload) => {
-            var index = state.projects.findIndex(elem => elem.id === payload.id);
-            state.projects.splice(index, 1);
+        async DELETE_PROJECT(state, payload) {
+            await db.deleteItem('Projects', payload);
         },
-        COMPLETE_PROJECT: (state, payload) => {
+        COMPLETE_PROJECT(state, payload) {
             var project = state.projects.find(elem => elem.id === payload.id);
             project.completed = !project.completed; 
         }
@@ -91,6 +93,9 @@ export default {
         },
         completeProject: (context, payload) => {
             context.commit("COMPLETE_PROJECT", payload);
+        },
+        async getProjectsFromDB() {
+            await db.getItems('Projects');
         }
 
     }

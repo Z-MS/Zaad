@@ -14,6 +14,10 @@
 import ResizableText from '../ResizableText'
 
 export default {
+    data: () => ({
+        editedText: "",
+        edited: false
+    }),
     props: {
         text: { type: String },
         id: { type: String, required: true }
@@ -27,7 +31,8 @@ export default {
                 return this.text
             },
             set(value) {
-                this.$store.dispatch("editNote", { text: value, id: this.id })
+                this.edited = true;
+                this.editedText = value;
             }
         }
     },
@@ -36,6 +41,10 @@ export default {
             this.$router.push({name: 'Notes'});
         },
         saveChanges() {
+            if(this.edited) {
+                this.$store.dispatch("editNote", { text: this.editedText, id: Number(this.id) })
+                this.$store.dispatch("getNotesFromDB");
+            }
             this.close();
         }
     }

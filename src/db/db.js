@@ -3,7 +3,7 @@ var db;
 export default {
 	async getDb() {
 		return new Promise((resolve, reject) => {
-			var request = indexedDB.open("MyTestDB");
+			var request = indexedDB.open("zTaskDB");
 
 			request.onerror = function(event) {
 				console.log("Why didn't you allow my DB to be created");
@@ -18,47 +18,91 @@ export default {
 			request.onupgradeneeded = event => {
 				console.log('onupgradeneeded');
 				var db = event.target.result;
-				db.createObjectStore("Notes", { autoIncrement: true, keyPath: 'id' })
+				db.createObjectStore("Notes", { autoIncrement: true, keyPath: 'id' });
+				db.createObjectStore("Projects", { autoIncrement: true, keyPath: 'id' });
+				db.createObjectStore("Tasks", { autoIncrement: true, keyPath: 'id' });
 			}
 		});
 	},
-	async getNotes() {
-		var notes = [];
+	async getItems(store) {
+		var items = [];
 		var db = await this.getDb();
 
 		return new Promise(resolve => {
-			var transaction = db.transaction('Notes');
-			transaction.oncomplete = () => {
-				resolve(notes);
+			var transaction = db.transaction(store);
+			transaction.oncomplete = function() {
+				resolve(items);
 			};
 
-			var store = transaction.objectStore('Notes');
-			store.openCursor().onsuccess = e => {
-				var cursor = e.target.result;
-				if(cursor) {
-					notes.push(cursor.value);
-					cursor.continue();
-				}
+			var objStore = transaction.objectStore(store);
+			objStore.getAll().onsuccess = function(event) {
+				items = event.target.result;
 			};
-
 		});
-		
 	},
-	async saveNotes(noteArray) {
+	async addItem(store, item) {
 		var db = await this.getDb();
 
 		return new Promise(resolve => {
-			var transaction = db.transaction('Notes', 'readwrite');
-			transaction.oncomplete = () => {
+			var transaction = db.transaction(store, 'readwrite');
+			transaction.oncomplete = function() {
 				resolve();
 			};
 
-			var store = transaction.objectStore('Notes');
-			noteArray.forEach(note => {
-				store.add(note)
-			});
+			var objStore = transaction.objectStore(store);
+			objStore.add(item);
 		});
-			
+	},
+	async editItem(store, itemID, editMethod) {
+		var db = await this.getDb();
+
+		return new Promise(resolve => {
+			var transaction = db.transaction(store, 'readwrite');
+			transaction.oncomplete = function() {
+				resolve();
+			};
+
+			var objStore = transaction.objectStore(store);
+			var req = objStore.get(itemID);
+			req.onsuccess = function() {
+				const data = req.result;
+
+				editMethod(data); // mutate the db data with a specific method
+				const update = objStore.put(data); // update the data in the object store
+				update.onsuccess = function() {
+					console.log("success!");
+				};
+			};
+		});
+	},
+	async deleteItem(store, itemID) {
+		var db = await this.getDb();
+
+		return new Promise(resolve => {
+			var transaction = db.transaction(store, 'readwrite');
+			transaction.oncomplete = function() {
+				resolve();
+			}
+
+			var objStore = transaction.objectStore(store);
+			var req = objStore.get(itemID);
+			req.onsuccess = function(event) {
+				console.log("Record: ", event.target.result);
+
+				req = objStore.delete(itemID);
+				req.onsuccess = function(event) {
+					console.log("delete successful: ", event.target.result);
+				}
+
+				req.onerror = function(event) {
+					console.log("ERRORZ: ", event.target.errorCode);
+				}
+			}
+
+			req.onerror = function(event) {
+				console.error("ERRORZ: ", event.target.errorCode);
+			}
+		})
 	}
 	
 }

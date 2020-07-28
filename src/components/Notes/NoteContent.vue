@@ -21,20 +21,21 @@ export default {
         isEditing: false
     }),
     props: {
-        id: { type: String, required: true }
+        id: { type: String/*Number from DB*/, required: true }
     },
     methods: {
         toggleEdit() {
             this.isEditing = !this.isEditing
         },
         deleteNote(id) {
-            this.$store.dispatch("deleteNote", id)
+            this.$store.dispatch("deleteNote", Number(id));
             this.$router.push({name: 'Notes'});
+            this.$store.dispatch('getNotesFromDB');
         }
     },
     computed: {
         note() {
-            return this.$store.getters.getNote(this.id)
+            return this.$store.getters.getNote(Number(this.id))
         }
     }
 }

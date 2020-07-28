@@ -41,7 +41,7 @@ body {
 #nav {
 	margin-top: 0%; 
 	padding: 0;
-	width: 30%;
+	width: 20%;
 	background-color: rgb(59, 172, 218);
 	position: fixed;
 	top: 0;

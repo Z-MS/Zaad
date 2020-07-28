@@ -1,3 +1,7 @@
+import db from "../../db/db";
+
+// import db from '../../db/db'
+
 export default {
     state: {
         todos: [
@@ -17,7 +21,7 @@ export default {
         getTodos: state => state.todos
       },
       mutations: {
-        ADD_TODO: (state, payload) => { 
+        async ADD_TODO(state, payload) { 
             var newTask = {
                 id: payload.newId,
                 task: payload.task,
@@ -26,15 +30,15 @@ export default {
     
             state.todos.unshift(newTask)
         },
-        TOGGLE_TODO: (state, payload) => {
+        async TOGGLE_TODO(state, payload) {
             var item = state.todos.find(todo => todo.id === payload);
             item.completed = !item.completed;
         },
-        EDIT_TODO: (state, {text, id}) => {
+        async EDIT_TODO(state, {text, id}) {
             var item = state.todos.find(todo => todo.id === id);
             item.task = text;
         },
-        DELETE_TODO: (state, payload) => {
+        async DELETE_TODO(state, payload) {
             var index = state.todos.findIndex(todo => todo.id === payload);
             state.todos.splice(index, 1);
         }
@@ -52,6 +56,10 @@ export default {
             },
             deleteTodo: (context, payload) => {
                 context.commit("DELETE_TODO", payload)
+            },
+            async getToDosFromDB(context) {
+                var todos = await db.getItems('ToDos');
+                context.state.todos = todos;
             }
       }
 }
