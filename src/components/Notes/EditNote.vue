@@ -1,17 +1,15 @@
 <template>
-    <div>
         <form @submit.prevent="saveChanges">
-            <button class="success" type="submit">Done</button>
-            <button class="danger" type="button" @click="close">Cancel</button>
-            <resizable-text>
-                <textarea cols="150" v-model="newText"/>
-            </resizable-text>
+            <button class="success ico" type="submit">&#xea10;</button>
+            <button class="danger ico" type="button" @click="close">&#xea0f;</button>
+            <!-- <resizable-text> -->
+                <textarea cols="150" rows="20" spellcheck="false" v-model="newText"/>
+            <!-- </resizable-text> -->
         </form>
-    </div>
 </template>
 
 <script>
-import ResizableText from '../ResizableText'
+// import ResizableText from '../ResizableText'
 
 export default {
     data: () => ({
@@ -22,9 +20,9 @@ export default {
         text: { type: String },
         id: { type: String, required: true }
     },
-    components: {
+    /* components: {
         ResizableText
-    },
+    }, */
     computed: {
         newText: {
             get() {
@@ -35,10 +33,11 @@ export default {
                 this.editedText = value;
             }
         }
-    },
+    }, 
     methods: {
         close() {
-            this.$router.push({name: 'Notes'});
+            // this.$router.push({name: 'Notes'});
+            this.$emit('close-edit');
         },
         saveChanges() {
             if(this.edited) {
@@ -56,16 +55,23 @@ export default {
     display: grid;
     grid-template-rows: 1fr, 2fr;
 } */
+::-webkit-scrollbar {
+        display: none;
+}
+
 a {
     text-decoration: none;
     color: beige;
 }
 
-textarea {
+textarea {   
+
     box-sizing: border-box;
     /* max-width: 90%; */
-    width: 60%;
-    margin-left: 35%;
+    width: 100%;
+    margin: 0 auto;
+    border: 0.5px solid rgba(163, 159, 159, 0.5);
+    border-radius: 0.5rem;
     display: block;
     color: black;
 	resize: none;

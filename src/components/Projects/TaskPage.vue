@@ -1,15 +1,18 @@
 <template>
     <div class="background">
-        <div class="taskgrid">
-            <p class="large">{{ task.name }}</p>    
+        <div class="sticky">
+            <p class="large">{{ task.name }}</p>
+            <input type="text" placeholder="Enter a new task"/>    
         </div>
-        <p class="large">{{ subtaskCount }} subtask(s) completed</p>
-        <ul v-for="subtask in task.subtasks" :key="subtask.id">
-            <li>   
-                <task-item :subtask="subtask" :parentTaskID="task.id"/>
-            </li>
-        </ul>
-        <div><b class="medium-text">DATE CREATED:</b> <b class="date">{{ task.dateCreated }}</b></div>
+        <!-- <p class="large">{{ subtaskCount }} subtask(s) completed</p> -->
+        <div>
+            <ul v-for="subtask in task.subtasks" :key="subtask.id">
+                <li>   
+                    <task-item :subtask="subtask" :parentTaskID="task.id"/>
+                </li>
+            </ul>
+        </div>
+        <!-- <div><b class="medium-text">DATE CREATED:</b> <b class="date">{{ task.dateCreated }}</b></div> -->
     </div>
 </template>
 
@@ -27,7 +30,7 @@ export default {
     computed: {
         task() {
             return this.$store.getters.getTask(this.id)
-        },
+        }/*,
         subtaskCount() {
             var count = 0
             this.task.subtasks.forEach(elem => {
@@ -36,7 +39,7 @@ export default {
                 }
             });
             return count
-        }
+        }*/
     }
 }
 </script>
@@ -50,6 +53,12 @@ export default {
     background-color: chartreuse;
 }
 
+.sticky {
+    position: sticky;
+    top: 0px;
+    background-color: white;
+}
+
 .item {
     display: grid;
     justify-content: center;    
@@ -57,20 +66,20 @@ export default {
 
 .background {
     background-color: white;
-    min-height: 100vh;
+    height: 50vh;
 	overflow: auto;
-    width: 70%;
-    margin-left: 30%;
+
 }
 
 .large {
+    font-family: 'Nunito bold';
     font-size: 2em;
     text-align: center;
 }
 
 li {
     list-style: none;
-    border-bottom: 1px solid rgba(195, 195, 195, 0.5);
+    /*border-bottom: 1px solid rgba(195, 195, 195, 0.5);*/
     font-size: 1.25rem;
 }
 

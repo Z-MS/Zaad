@@ -1,22 +1,22 @@
 <template>
     <div class="taskgrid">
-        <div @click="$router.push({name: 'TaskPage', params: { id: task.id }})" class="item" v-for="task in tasks" :key="task.id">
-            <h1>{{ task.name }}</h1>
-            <p>{{ task.taskNote }}</p>
-            <p>{{ task.dateCreated }}</p>
-            <p>{{ task.completed }}</p>
+        <div class="item" v-for="task in tasks" :key="task.id">
+            <!-- <p>{{ task.dateCreated }}</p>
+            <p>{{ task.completed }}</p> -->
+            <task-page :id="task.id"/>
         </div>
     </div>
 </template>
 
 <script>
+import TaskPage from './TaskPage'
 export default {
-    props: {
-        taskIDs: { type: Array, required: true }
+    components: {
+        TaskPage
     },
     computed: {
         tasks() {
-            return this.$store.getters.getTasks(this.taskIDs)
+            return this.$store.getters.getTasks
         }
     }
 }
@@ -25,14 +25,16 @@ export default {
 <style scoped>
     .taskgrid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 1fr;
         gap: 10px;
+        margin-left: 20%;
     }
 
     .item {
         display: grid;
         justify-content: center;
-        background-color: chartreuse;
+        background-color: white;
 
     }
 </style>

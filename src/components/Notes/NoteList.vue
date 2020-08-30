@@ -1,47 +1,45 @@
 <template>
 	<div class="note-container">
 		<div id="regular" v-if="!isNew">
-			<button class="success" @click="toggleNew">Create a new note</button>
-			<!-- <div class="list"> -->
+			<button class="success nunito-bold" @click="toggleNew">Create a new note</button>
 				<div class="grid">
 					<div v-for="note in notes" :key="note.id" class="item">
-					<!-- <div class="row"> -->
-						<p class="note-text"><router-link :to="`note/${note.id}`">{{ note.excerpt }}</router-link></p>
-						<small class="note-bottom">{{ note.date }}</small>
-					<!-- </div> -->
+						<!-- <div class="btns">
+							<button @click="show(note.id)" class="success ico">&#xe905;</button>
+						</div> -->
+						<dialog :id="String(note.id)">
+							<edit-note :text="note.noteText" :id="String(note.id)" @close-edit="close(note.id)"/>
+						</dialog> 
+						<p class="note-text">
+						<router-link :to="`note/${note.id}`">{{ note.excerpt }}</router-link></p>
 					</div>
-					<div id="editor" class="item">
-						<p>
-							ffddddddddd
-						</p>
-					</div>
-				<!-- </div> -->
-			</div>
-			
+				</div>
 		</div>
 		<div id="new" v-else>
 			<form @submit.prevent="createNote">
-				<button class="success" type="submit">Save</button>
-				<button class="danger" type="button" @click="cancel">Cancel</button>
-				<resizable-text>
-					<textarea v-model="noteText" cols="150"/>
-				</resizable-text>
+					<button class="success" type="submit">Save</button>
+					<button class="danger" type="button" @click="cancel">Cancel</button>
+					<resizable-text>
+						<textarea v-model="noteText" cols="150"/>
+					</resizable-text>
 			</form>
 		</div>
 	</div>
 </template>
 
 <script>
-import ResizableText from '../ResizableText'
+import ResizableText from '../ResizableText';
+import EditNote from './EditNote'
 
 export default {
 	data: () => ({
 		newId: 2,
 		noteText: "",
-		isNew: false
+		isNew: false/* ,
+		isEditing: false */
 	}),
 	components: {
-		ResizableText
+		ResizableText, EditNote
 	},
 	created() {
 		if(!this.$store.getters.getNotes.length) {
@@ -59,18 +57,30 @@ export default {
 		toggleNew() {
 			this.noteText = "";
 			this.isNew = !this.isNew;
-		},
+		}/* ,
+		toggleEdit() {
+			this.isEditing = !this.isEditing;
+		} */,
 		createNote() {
 			if(this.noteText) {
 				this.$store.dispatch("addNote", { noteText: this.noteText, id: String(this.newId) });
 				this.newId++;
 			}
-
+ 
 			this.$store.dispatch('getNotesFromDB');
 			this.toggleNew();
 		},
 		cancel() {
 			this.toggleNew();
+		}, 
+		show(id) {
+			var diag = document.getElementById(id);
+			
+			diag.showModal();
+		}, 
+		close(id) {
+			var diag = document.getElementById(id);
+			diag.close();
 		}
 	}
 
@@ -93,31 +103,38 @@ textarea {
 	font-size: 1.5rem;
 }
 
+dialog {
+	width: 60%;
+	margin: 0 auto;
+	border: 0.5px solid rgb(117, 114, 114);
+	border-radius: 1rem;
+}
+
+button {
+	border-radius: 0.5rem;
+}
+
 #regular {
 	width: 95%;
     margin: auto;
-    /* background-color: white;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    box-shadow: 0 0 2rem rgba(0, 0, 0, 0.25); */
 }
 
 .grid {
 	display: grid;
-	grid-template-columns: repeat(2, 30%) 1fr;
-	grid-auto-rows: 1fr;
+	grid-template-columns: repeat(3, 1fr);
+	grid-auto-rows: max-content;
 	gap: 1rem;
-	border: 2px solid yellow;	 
+	/*border: 2px solid yellow;	 */
 }
 
 .item {
-	display: grid; 
-	justify-content: center;
-	align-content: center;
-	border: 2px solid red;
+	display: grid;
+	/* justify-content: center;
+	align-content: center; */
+	/*border: 2px solid red;*/
 	background-color: white;
 	border-radius: 0.5rem;
-	/*padding: 1rem 1rem 0;*/
+	box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.25);
 }
 
 .list {
@@ -137,22 +154,18 @@ textarea {
 }
 
 .note-text {
-	color: yellow;
 	/* text-align: center; */
+	padding-left: 1em;
+	padding-right: 1em;
 	/* width: 80%; */
 	/* max-width: 50%; */
-	overflow: hidden;
+	overflow-x: hidden;
 	/* flex-grow: 0; */
 }
 
-#editor {
-	background: mistyrose;
-	grid-row: 1/ span 4;
-	grid-column-start: 3;
-	border: 2px solid black;
+.btns {
+	height: 2rem;
 }
-/* small {
-	position: absolute;
-	left: 85%;
-} */
+
+
 </style>

@@ -2,13 +2,13 @@ import Find from '../../utils/find'
 import db from '../../db/db';
 import DateTime from '../../utils/DateTime';
 
-export default {
+export default { 
     state: {
+
         tasks: [
             {   
                 id: '1', // constant
-                name: 'Tasko', // editable
-                taskNote: 'dk', // editable
+                name: 'Tasko',
                 completed: true, // toggleable (if that's even a word :-) )
                 dateCreated: '12-3-2010', // constant
                 completionDate: '',
@@ -16,67 +16,86 @@ export default {
                     {
                         task: 'Subbo', // editable
                         id: '1', // constant
-                        completed: true // toggleable
-                    },
-                    {
-                        task: 'Sub and task', // editable
-                        id: '3', // constant
-                        completed: true // toggleable
-                    },
-                    {
-                        task: 'bbo', // editable
-                        id: '4', // constant
                         completed: false // toggleable
                     },
                     {
+                        task: 'Srffbo', // editable
+                        id: '2', // constant
+                        completed: false // toggleable
+                    },
+                    {
+                        task: 'Suecrtr', // editable
+                        id: '4', // constant
+                        completed: false // toggleable
+                    },{
+                        task: 'Suggbo', // editable
+                        id: '14', // constant
+                        completed: false // toggleable
+                    },{
+                        task: 'Surbo', // editable
+                        id: '15', // constant
+                        completed: false // toggleable
+                    },{
                         task: 'Surfboard', // editable
-                        id: '5', // constant
-                        completed: true // toggleable
+                        id: '6', // constant
+                        completed: false // toggleable
                     }
                 ]
             },
             {   
                 id: '2', // constant
-                name: 'eTasko', // editable
-                taskNote: 'dk', // editable
+                name: 'Other task',
                 completed: true, // toggleable (if that's even a word :-) )
-                dateCreated: '12-3-2010', // constant
+                dateCreated: '12-3-2009', // constant
                 completionDate: '',
                 subtasks: [                 // editable
                     {
-                        task: 'Subbo', // editable
+                        task: 'Other task', // editable
                         id: '1', // constant
                         completed: true // toggleable
-                    }
-                ]
-            },
-            {   
-                id: '4', // constant
-                name: 'Task4', // editable
-                taskNote: 'dk', // editable
-                completed: true, // toggleable (if that's even a word :-) )
-                dateCreated: '12-3-2010', // constant
-                completionDate: '',
-                subtasks: [                 // editable
+                    },
                     {
-                        task: 'Subbo', // editable
-                        id: '1', // constant
-                        completed: true // toggleable
+                       task: 'Yet another task', // editable
+                        id: '2', // constant
+                        completed: true // toggleable 
                     }
                 ]
             },
             {   
                 id: '3', // constant
-                name: 'Task3', // editable
-                taskNote: 'dk', // editable
+                name: 'Taskerson',
                 completed: true, // toggleable (if that's even a word :-) )
-                dateCreated: '12-3-2010', // constant
+                dateCreated: '12-3-2009', // constant
                 completionDate: '',
                 subtasks: [                 // editable
                     {
-                        task: 'Subbo', // editable
+                        task: 'Other task', // editable
                         id: '1', // constant
                         completed: true // toggleable
+                    },
+                    {
+                       task: 'Yet another task', // editable
+                        id: '2', // constant
+                        completed: true // toggleable 
+                    }
+                ]
+            },
+            {   
+                id: '6', // constant
+                name: 'Taskenator',
+                completed: true, // toggleable (if that's even a word :-) )
+                dateCreated: '12-3-2009', // constant
+                completionDate: '',
+                subtasks: [                 // editable
+                    {
+                        task: 'Other task', // editable
+                        id: '1', // constant
+                        completed: true // toggleable
+                    },
+                    {
+                       task: 'Yet another task', // editable
+                        id: '2', // constant
+                        completed: true // toggleable 
                     }
                 ]
             }
@@ -88,14 +107,7 @@ export default {
             return Find.findItem(state.tasks, id);
             // return state.tasks.find(elem => elem.id === id);
         },
-        getTasks: (state) => (taskIDs) => {
-            var taskArray = [];
-            for(let i = 0; i < taskIDs.length; i++) {
-                taskArray.push(state.tasks.find(elem => elem.id === taskIDs[i]));
-            }
-            return taskArray;
-        },
-        getFirst: (state) => state.tasks[0].subtasks
+        getTasks: state =>  state.tasks
       },
       mutations: {
 // Since tasks and subtasks are very similar and are coupled together, put their functionalities in the same function for now
@@ -111,12 +123,12 @@ export default {
     
             await db.addItem('Tasks', newTask);
         },
-        async EDIT_TASK(state, payload) {
+        async RENAME_TASK(state, payload) {
             await db.editItem('Tasks', payload.id, (data) => {
                 data.name = payload.text;
             });
         },
-        EDIT_SUBTASK(state, {text, subTaskId, taskId}) {
+        async EDIT_SUBTASK(state, {text, subTaskId, taskId}) {
             var parentTask = Find.findItem(state.tasks, taskId);// state.tasks.find(elem => elem.id === taskId);
             var subtask = Find.findItem(parentTask.subtasks, subTaskId);// parentTask.subtasks.find(elem => elem.id === subTaskId);
             subtask.task = text;
@@ -129,7 +141,7 @@ export default {
         async DELETE_TASK(state, {id}) {
             await db.deleteItem('Tasks', id);
         },
-        DELETE_SUBTASK(state, {subTaskId, taskId}) {
+        async DELETE_SUBTASK(state, {subTaskId, taskId}) {
             var parentTask = Find.findItem(state.tasks, taskId);
             var index = parentTask.subtasks.findIndex(elem => elem.id === subTaskId);
             parentTask.subtasks.splice(index, 1);
@@ -142,10 +154,10 @@ export default {
             },
             toggleSubtask: (context, payload) => {
                 context.commit("TOGGLE_SUBTASK", payload)
-            },
-            editTask: (context, payload) => {
+            } ,
+            renameTask: (context, payload) => {
                 context.commit("EDIT_TASK", payload)
-            },
+            } ,
             editSubtask: (context, payload) => {
                 context.commit("EDIT_SUBTASK", payload)
             },

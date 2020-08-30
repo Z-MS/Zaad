@@ -7,6 +7,7 @@ import NoteContent from '../components/Notes/NoteContent.vue'
 import EditNote from '../components/Notes/EditNote.vue'
 import ProjectList from '../components/Projects/ProjectList.vue'
 import ProjectPage from '../components/Projects/ProjectPage.vue'
+import TaskList from '../components/Projects/TaskList.vue'
 import TaskPage from '../components/Projects/TaskPage.vue'
 
 Vue.use(VueRouter)
@@ -57,6 +58,11 @@ Vue.use(VueRouter)
     name: 'ProjectPage',
     component: ProjectPage,
     props: true
+  },
+  {
+    path: '/tasks',
+    name: 'TaskList',
+    component: TaskList,
   },
   {
     path: '/task/:id',

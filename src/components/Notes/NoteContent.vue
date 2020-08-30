@@ -4,6 +4,7 @@
             <button class="change" @click="toggleEdit">Edit</button>
             <button class="danger" @click="deleteNote(id)">Delete</button>
             <p @click="toggleEdit"> {{ note.noteText }} </p>
+            <p>{{ note.noteText.length }} </p>
         </div>
         <edit-note v-else :text="note.noteText" :id="id"/>
     </div>

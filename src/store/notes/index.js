@@ -25,7 +25,7 @@ export default {
             var [currentDate] = DateTime.getDateTime();
             var newNote = {
                 noteText: payload.noteText,
-                excerpt: snippet.snip(payload.noteText, Math.round(payload.noteText.length / 2)),
+                excerpt: snippet.snip(payload.noteText),
                 date: currentDate,
                 tag: payload.tag
             }
@@ -37,7 +37,7 @@ export default {
             await db.deleteItem('Notes', payload); 
         },
         async EDIT_NOTE(state, payload) {
-            payload.excerpt = snippet.snip(payload.text, Math.round(payload.text.length / 2));
+            payload.excerpt = snippet.snip(payload.text);
         
             await db.editItem('Notes', payload.id, (data) => {
                 data.noteText = payload.text;
