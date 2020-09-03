@@ -4,9 +4,9 @@
 			<button class="success nunito-bold" @click="toggleNew">Create a new note</button>
 				<div class="grid">
 					<div v-for="note in notes" :key="note.id" class="item">
-						<!-- <div class="btns">
+						<div class="btns">
 							<button @click="show(note.id)" class="success ico">&#xe905;</button>
-						</div> -->
+						</div>
 						<dialog :id="String(note.id)">
 							<edit-note :text="note.noteText" :id="String(note.id)" @close-edit="close(note.id)"/>
 						</dialog> 
@@ -63,7 +63,7 @@ export default {
 		} */,
 		createNote() {
 			if(this.noteText) {
-				this.$store.dispatch("addNote", { noteText: this.noteText, id: String(this.newId) });
+				this.$store.dispatch("addNote", { noteText: this.noteText });
 				this.newId++;
 			}
  

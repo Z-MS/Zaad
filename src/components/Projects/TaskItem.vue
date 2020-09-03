@@ -1,12 +1,12 @@
 <template>
     <div>
-        <span v-if="!isEditing">
-            <label class="checkbox-label" :class="{completed: subtask.completed}" >
+        <span v-if="!isEditing" @dblclick="toggleEdit">
+            <label class="checkbox-label" :class="{completed: subtask.completed}">
                 {{ subtask.task }}
-            <!-- <button class="change ico" @click="toggleEdit">&#xe905;</button> check the checkbox value -->
                 <input type="checkbox" :checked="subtask.completed" @click="toggleComplete(subtask.id)"/>
                 <span></span>
             </label>
+            <!-- <button class="change ico" @click="toggleEdit">&#xe905;</button> -->
         </span>
         <form @submit.prevent="saveChanges" v-else>
             <input type="text" v-model="newText"/>
@@ -19,31 +19,39 @@
 <script>
 export default {
     data: () => ({
-        isEditing: false
+        isEditing: false,
+        editedText: "",
+        edited: false
     }),
     computed: {
         newText: {
             get() {
-                return this.subtask.task
+                return this.text
             },
             set(value) {
-                this.$store.dispatch("editSubtask", { text: value, subTaskId: this.subtask.id, taskId: this.parentTaskID })
+                this.edited = true;
+                this.editedText = value;
             }
         } 
     },
     props: {
         subtask: { type: Object, required: true },
-        parentTaskID: { type: String, required: true }
+        parentTaskID: { type: Number, required: true }
     },
     methods: {
         toggleEdit() {
             this.isEditing = !this.isEditing 
         },
         saveChanges() {
+            if(this.edited) {
+                this.$store.dispatch("editSubtask", { text: this.editedText, subTaskId: this.subtask.id, taskId: this.parentTaskID });
+                this.$store.dispatch("getTasksFromDB");
+            }
             this.toggleEdit();
         },
         toggleComplete(childID) {
-            this.$store.dispatch("toggleSubtask", { subTaskId: childID, taskId: this.parentTaskID })
+            this.$store.dispatch("toggleSubtask", { subTaskId: childID, taskId: this.parentTaskID });
+            this.$emit('increase-percentage');
         }
     }
 }

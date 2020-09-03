@@ -1,11 +1,12 @@
 import Find from '../../utils/find'
 import db from '../../db/db';
 import DateTime from '../../utils/DateTime';
+import Percentage from '../../utils/Percentage';
 
 export default { 
     state: {
 
-        tasks: [
+        tasks: [/* 
             {   
                 id: '1', // constant
                 name: 'Tasko',
@@ -74,7 +75,7 @@ export default {
                         completed: true // toggleable
                     },
                     {
-                       task: 'Yet another task', // editable
+                        task: 'Yet another task', // editable
                         id: '2', // constant
                         completed: true // toggleable 
                     }
@@ -98,14 +99,13 @@ export default {
                         completed: true // toggleable 
                     }
                 ]
-            }
+            } */
 
         ]
       },
       getters: {
         getTask: (state) => (id) => {
-            return Find.findItem(state.tasks, id);
-            // return state.tasks.find(elem => elem.id === id);
+            return Find.findItem(state.tasks, id);            // return state.tasks.find(elem => elem.id === id);
         },
         getTasks: state =>  state.tasks
       },
@@ -118,28 +118,38 @@ export default {
                 completed: false,
                 dateCreated: currentDate,
                 completionDate: '',
-                subtasks: payload.subtasks  // should be an array of objects
+                subtasks: payload.subtasks,  // should be an array of objects
+                percent: Percentage.calcPercentage(payload.subtasks)
             }
     
             await db.addItem('Tasks', newTask);
         },
         async RENAME_TASK(state, payload) {
-            await db.editItem('Tasks', payload.id, (data) => {
-                data.name = payload.text;
+            await db.editItem('Tasks', payload.id, (task) => {
+                task.name = payload.text;
             });
         },
+        async ADD_SUBTASK(state, payload) {
+            await db.editItem('Tasks', payload.id, (task) => {
+                task.subtasks.push(payload.subtask);
+            })
+        },
         async EDIT_SUBTASK(state, {text, subTaskId, taskId}) {
-            var parentTask = Find.findItem(state.tasks, taskId);// state.tasks.find(elem => elem.id === taskId);
-            var subtask = Find.findItem(parentTask.subtasks, subTaskId);// parentTask.subtasks.find(elem => elem.id === subTaskId);
-            subtask.task = text;
+            await db.editItem('Tasks', taskId, (parentTask) => {
+                var subtask = Find.findItem(parentTask.subtasks, subTaskId);
+                subtask.task = text;
+
+            });
         },
-        TOGGLE_SUBTASK(state, {subTaskId, taskId}) {           
-            var parentTask = Find.findItem(state.tasks, taskId);
-            var subtask = Find.findItem(parentTask.subtasks, subTaskId);
-            subtask.completed = !subtask.completed;
+        async TOGGLE_SUBTASK(state, {subTaskId, taskId}) {           
+            await db.editItem('Tasks', taskId, (parentTask) => {
+                var subtask = Find.findItem(parentTask.subtasks, subTaskId);
+                subtask.completed = !subtask.completed;
+                parentTask.percent = Percentage.calcPercentage(parentTask.subtasks);
+            });
         },
-        async DELETE_TASK(state, {id}) {
-            await db.deleteItem('Tasks', id);
+        async DELETE_TASK(state, payload) {
+            await db.deleteItem('Tasks', payload);
         },
         async DELETE_SUBTASK(state, {subTaskId, taskId}) {
             var parentTask = Find.findItem(state.tasks, taskId);
@@ -152,12 +162,15 @@ export default {
             addTask: (context, payload) => {
                 context.commit("ADD_TASK", payload)
             },
+            addSubtask: (context, payload) => {
+                context.commit("ADD_SUBTASK", payload)
+            },
             toggleSubtask: (context, payload) => {
                 context.commit("TOGGLE_SUBTASK", payload)
             } ,
             renameTask: (context, payload) => {
                 context.commit("EDIT_TASK", payload)
-            } ,
+            },
             editSubtask: (context, payload) => {
                 context.commit("EDIT_SUBTASK", payload)
             },

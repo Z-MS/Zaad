@@ -1,18 +1,28 @@
 <template>
     <div class="background">
         <div class="sticky">
-            <p class="large">{{ task.name }}</p>
-            <input type="text" placeholder="Enter a new task"/>    
+            <div class="row">
+                <p class="large">{{ task.name }}</p>
+                <svg @dblclick="deleteTask">
+                    <circle stroke-dasharray="0" r="40" cx="60%" cy="50%" stroke="gray" fill="none" stroke-width="5" stroke-linecap="round">
+                    </circle>
+                    <circle :id="task.id" class="percent-ring" 
+                    :stroke-dashoffset="circumference" r="40" cx="60%" cy="50%" stroke="lime" fill="none" stroke-width="3" stroke-linecap="round">
+                    </circle>
+                    <text :x="shiftX" y="60">{{ percent }}%</text>
+                </svg>
+            </div>
+            <form @submit.prevent="addSubtask">
+                <input v-model="taskText" type="text" placeholder="Enter a new item"/>
+            </form>    
         </div>
-        <!-- <p class="large">{{ subtaskCount }} subtask(s) completed</p> -->
         <div>
             <ul v-for="subtask in task.subtasks" :key="subtask.id">
                 <li>   
-                    <task-item :subtask="subtask" :parentTaskID="task.id"/>
+                    <task-item :subtask="subtask" :parentTaskID="task.id" @increase-percentage="increase"/>
                 </li>
             </ul>
         </div>
-        <!-- <div><b class="medium-text">DATE CREATED:</b> <b class="date">{{ task.dateCreated }}</b></div> -->
     </div>
 </template>
 
@@ -20,28 +30,81 @@
 
 import TaskItem from "./TaskItem";
 export default {
-
+    data: () => ({
+        circumference: 2 * Math.PI * 40,
+        taskText: ""
+    }),
+    mounted() {
+        this.increase();
+    },
     components: {
         TaskItem
     },
     props: {
-        id: { type: String, required: true }
+        id: { type: Number, required: true }
     },
     computed: {
         task() {
             return this.$store.getters.getTask(this.id)
-        }/*,
-        subtaskCount() {
-            var count = 0
-            this.task.subtasks.forEach(elem => {
-                if(elem.completed) {
-                    count++
+        },
+        shiftX() {
+            // this is to centre the text within the circle
+            var x = 40; // x-position of percent text when < 100
+            if(this.percent === 100) { 
+                x = 31; // x-position of percent text when = 100
+            }
+            return x;
+        },
+        subtasks() {
+            return this.task.subtasks;
+        },
+        percent() {
+            return this.task.percent;
+        }
+    },
+    methods: {
+        addSubtask() {
+            this.$store.dispatch("addSubtask", { id: this.id, subtask:  { id: this.id + 1, task: this.taskText } 
+            });
+            this.$store.dispatch("getTasksFromDB");
+
+            this.taskText = "";
+        },
+        getOffset() {
+            var offset = this.circumference - this.percent / 100 * this.circumference ;
+            var circle = document.getElementById(this.id);
+            circle.style.strokeDasharray = `${this.circumference} ${this.circumference}`;
+            circle.style.strokeDashoffset = `${this.circumference}`;
+
+            circle.style.strokeDashoffset = offset; 
+        },
+        countComplete() {
+            const total = this.subtasks.length;
+            var completedTaskCount = 0;
+            this.subtasks.forEach(task => {
+                if(task.completed) {
+                    completedTaskCount++;
                 }
             });
-            return count
-        }*/
-    }
+
+            var percentCompleted = (completedTaskCount / total) * 100;
+            if(!Number.isInteger(percentCompleted)) {
+               percentCompleted = Math.ceil(percentCompleted);
+            }
+
+            return percentCompleted;
+        },
+        async increase() {
+            await this.$store.dispatch("getTasksFromDB");
+            this.getOffset();
+        },
+        deleteTask() {
+            this.$store.dispatch("deleteTask", this.id);
+            this.$store.dispatch("getTasksFromDB");
+        }
+    } 
 }
+
 </script>
 
 <style scoped>
@@ -59,6 +122,11 @@ export default {
     background-color: white;
 }
 
+.row {
+    display: flex;
+    justify-content: space-around;
+}
+
 .item {
     display: grid;
     justify-content: center;    
@@ -68,7 +136,6 @@ export default {
     background-color: white;
     height: 50vh;
 	overflow: auto;
-
 }
 
 .large {
@@ -77,9 +144,12 @@ export default {
     text-align: center;
 }
 
+.medium-text {
+    font-size: 1.5rem;
+}
+
 li {
     list-style: none;
-    /*border-bottom: 1px solid rgba(195, 195, 195, 0.5);*/
     font-size: 1.25rem;
 }
 
@@ -96,7 +166,22 @@ li {
     font-size: 1.5rem;
 }
 
-.medium-text {
+svg {
+    /* border: 2px solid black; */
+    width: 30%;
+    height: 15vh;
+}
+
+text {
     font-size: 1.5rem;
 }
+
+.percent-ring {
+    transition: 0.35s stroke-dashoffset;
+    /*axis compensation*/
+    transform: rotate(-90deg);
+    transform-origin: 60% 50%;
+}
+
+
 </style>
