@@ -4,9 +4,10 @@
             <label class="checkbox-label" :class="{completed: subtask.completed}">
                 {{ subtask.task }}
                 <input type="checkbox" :checked="subtask.completed" @click="toggleComplete(subtask.id)"/>
-                <span></span>
+                <span class="checkmark"></span>
             </label>
-            <!-- <button class="change ico" @click="toggleEdit">&#xe905;</button> -->
+            <a class="ico option" @click="toggleEdit">circle-down</a>
+            <!-- <dialog></dialog> -->
         </span>
         <form @submit.prevent="saveChanges" v-else>
             <input type="text" v-model="newText"/>
@@ -26,7 +27,7 @@ export default {
     computed: {
         newText: {
             get() {
-                return this.text
+                return this.subtask.task;
             },
             set(value) {
                 this.edited = true;
@@ -36,7 +37,7 @@ export default {
     },
     props: {
         subtask: { type: Object, required: true },
-        parentTaskID: { type: Number, required: true }
+        parentTaskID: { type: String, required: true }
     },
     methods: {
         toggleEdit() {
@@ -59,24 +60,40 @@ export default {
 
 <style scoped>
 
+.checkbox-label {
+    display: inline-block;
+    position: relative;
+    padding-left: 35px;
+    margin: 0 auto; 
+    text-align: justify;
+    width: 85%;
+}
+
 .checkbox-label input[type="checkbox"] {
     display: none;
 }
 
-.checkbox-label input[type="checkbox"] + *::before {
+.checkmark {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.checkbox-label input[type="checkbox"] ~ .checkmark::after {
+    display: block;
     font-family: 'IcoMoon';
     content: "\ea53";
-    display: inline-block;
     width: 1.4rem;
     height: 1.3rem;
-    margin-left: 2em;
     vertical-align: text-top;
     border: 0.1rem solid transparent;
     border-radius: 10%;
 
 }
 
-.checkbox-label input[type="checkbox"]:checked + *::before {
+.checkbox-label input[type="checkbox"]:checked ~ .checkmark::after {
+    display: block;
     font-family: 'IcoMoon'; 
     content: "\ea52";
     width: 1.35rem;
@@ -87,11 +104,15 @@ export default {
     /*border-color: teal*/
 }
 
-/*.checkbox-label input[type="checkbox"]:checked + * {
-    color: teal;
-}*/
-
 .completed {
     text-decoration: line-through solid rgb(83, 82, 82);
+}
+
+.option {
+    opacity: 0;
+}
+
+.option:hover {
+    opacity: 1
 }
 </style>

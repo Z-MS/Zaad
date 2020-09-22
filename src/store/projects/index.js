@@ -1,4 +1,4 @@
-import find from '../../utils/find'
+import Finder from '../../utils/finder'
 import DateTime from '../../utils/DateTime';
 import db from '../../db/db'
 
@@ -36,7 +36,7 @@ export default {
     getters: {
         getProjects: state => state.projects,
         getProject: state => id => {
-            return find.findItem(state.projects, id)
+            return Finder.findItem(state.projects, id)
             // return state.projects.find(elem => elem.id === id);
         }
     },
@@ -61,7 +61,7 @@ export default {
         },
         EDIT_PROJECT(state, payload) {
             // project name, description,notes
-            var project = find.findItem(state.projects, payload.id);
+            var project = Finder.findItem(state.projects, payload.id);
             switch(payload.field) {
                 case 'name': 
                     project.name = payload.content;

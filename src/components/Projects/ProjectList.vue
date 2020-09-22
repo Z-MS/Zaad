@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <!-- <div class="container">
         <button class="success">Create a new project</button>
         <div class="grid">
             <div @click="$router.push({name: 'ProjectPage', params: { id: project.id }})" class="item" v-for="project in projects" :key="project.id">
@@ -13,19 +13,20 @@
                 </ul>
             </div>
         </div>
-    </div>
+    </div> -->
+    <h1>Work in progress. Check back later</h1>
 </template>
 
 <script>
 // import ProjectPage from './ProjectPage'
 
-export default {
+/*export default {
     data: () => ({
         isEditing: false
     }),
     /* components: {
         ProjectPage
-    } ,*/
+    } ,
     computed: {
         projects() {
             return this.$store.getters.getProjects
@@ -36,7 +37,7 @@ export default {
             return this.$store.getters.getTasks(taskIDs)
         }
     }
-}
+}*/
 </script>
 
 <style scoped>
@@ -78,7 +79,7 @@ export default {
 
     h1 {
         display: inline;
-        color: white;
+        color: grey;
     }
 
 </style>

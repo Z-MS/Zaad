@@ -13,7 +13,7 @@
                 </svg>
             </div>
             <form @submit.prevent="addSubtask">
-                <input v-model="taskText" type="text" placeholder="Enter a new item"/>
+                <input v-model="subtaskText" type="text" placeholder="Enter a new item"/>
             </form>    
         </div>
         <div>
@@ -29,10 +29,12 @@
 <script>
 
 import TaskItem from "./TaskItem";
+import id from '../../utils/idgen';
+
 export default {
     data: () => ({
         circumference: 2 * Math.PI * 40,
-        taskText: ""
+        subtaskText: ""
     }),
     mounted() {
         this.increase();
@@ -41,7 +43,7 @@ export default {
         TaskItem
     },
     props: {
-        id: { type: Number, required: true }
+        id: { type: String, required: true }
     },
     computed: {
         task() {
@@ -59,16 +61,21 @@ export default {
             return this.task.subtasks;
         },
         percent() {
-            return this.task.percent;
+            if(isNaN(this.task.percent)) {
+                return 0;
+            } else {
+                return this.task.percent;
+            }
         }
     },
     methods: {
         addSubtask() {
-            this.$store.dispatch("addSubtask", { id: this.id, subtask:  { id: this.id + 1, task: this.taskText } 
+            const idPrefix = id.generate();
+            this.$store.dispatch("addSubtask", { id: this.id, subtask:  { id: idPrefix, task: this.subtaskText } 
             });
             this.$store.dispatch("getTasksFromDB");
 
-            this.taskText = "";
+            this.subtaskText = "";
         },
         getOffset() {
             var offset = this.circumference - this.percent / 100 * this.circumference ;
@@ -134,8 +141,9 @@ export default {
 
 .background {
     background-color: white;
-    height: 50vh;
+    /*height: 50vh;*/
 	overflow: auto;
+    border-radius: 1rem;
 }
 
 .large {

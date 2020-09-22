@@ -5,7 +5,7 @@
 				<div class="grid">
 					<div v-for="note in notes" :key="note.id" class="item">
 						<div class="btns">
-							<button @click="show(note.id)" class="success ico">&#xe905;</button>
+							<button @click="show(note.id)" class="pen ico">&#xe905;</button>
 						</div>
 						<dialog :id="String(note.id)">
 							<edit-note :text="note.noteText" :id="String(note.id)" @close-edit="close(note.id)"/>
@@ -33,7 +33,6 @@ import EditNote from './EditNote'
 
 export default {
 	data: () => ({
-		newId: 2,
 		noteText: "",
 		isNew: false/* ,
 		isEditing: false */
@@ -64,7 +63,6 @@ export default {
 		createNote() {
 			if(this.noteText) {
 				this.$store.dispatch("addNote", { noteText: this.noteText });
-				this.newId++;
 			}
  
 			this.$store.dispatch('getNotesFromDB');
@@ -167,5 +165,8 @@ button {
 	height: 2rem;
 }
 
-
+.pen {
+	color: rgb(204, 204, 35);
+	background-color: white;
+}
 </style>

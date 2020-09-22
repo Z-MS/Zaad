@@ -5,4 +5,4 @@ export default {
     }
 }
 
-// find an item in an array. To be used in Vuex
+// search for an item by its ID in an array. To be used in Vuex

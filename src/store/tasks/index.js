@@ -1,7 +1,8 @@
-import Find from '../../utils/find'
-import db from '../../db/db';
+import Finder from '../../utils/finder'
 import DateTime from '../../utils/DateTime';
 import Percentage from '../../utils/Percentage';
+import id from '../../utils/idgen';
+import db from '../../db/db';
 
 export default { 
     state: {
@@ -105,15 +106,18 @@ export default {
       },
       getters: {
         getTask: (state) => (id) => {
-            return Find.findItem(state.tasks, id);            // return state.tasks.find(elem => elem.id === id);
+            return Finder.findItem(state.tasks, id);            // return state.tasks.find(elem => elem.id === id);
         },
-        getTasks: state =>  state.tasks
+        getTasks: state =>  state.tasks //rewrite this function to accept args
       },
       mutations: {
 // Since tasks and subtasks are very similar and are coupled together, put their functionalities in the same function for now
         async ADD_TASK(state, payload) {
             var [currentDate] = DateTime.getDateTime();
+            var idPrefix = id.generate();
+
             var newTask = {
+                id: idPrefix,
                 name: payload.name,
                 completed: false,
                 dateCreated: currentDate,
@@ -136,14 +140,14 @@ export default {
         },
         async EDIT_SUBTASK(state, {text, subTaskId, taskId}) {
             await db.editItem('Tasks', taskId, (parentTask) => {
-                var subtask = Find.findItem(parentTask.subtasks, subTaskId);
+                var subtask = Finder.findItem(parentTask.subtasks, subTaskId);
                 subtask.task = text;
 
             });
         },
         async TOGGLE_SUBTASK(state, {subTaskId, taskId}) {           
             await db.editItem('Tasks', taskId, (parentTask) => {
-                var subtask = Find.findItem(parentTask.subtasks, subTaskId);
+                var subtask = Finder.findItem(parentTask.subtasks, subTaskId);
                 subtask.completed = !subtask.completed;
                 parentTask.percent = Percentage.calcPercentage(parentTask.subtasks);
             });
@@ -152,7 +156,7 @@ export default {
             await db.deleteItem('Tasks', payload);
         },
         async DELETE_SUBTASK(state, {subTaskId, taskId}) {
-            var parentTask = Find.findItem(state.tasks, taskId);
+            var parentTask = Finder.findItem(state.tasks, taskId);
             var index = parentTask.subtasks.findIndex(elem => elem.id === subTaskId);
             parentTask.subtasks.splice(index, 1);
         }

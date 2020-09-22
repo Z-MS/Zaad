@@ -1,14 +1,15 @@
 <template>
     <div>
-        <button class="success rounded" @click="toggleNew">Create new task</button>
+        <button v-if="!isNew" class="success rounded" @click="toggleNew">Create new task</button>
         <div class="taskgrid" v-if="!isNew">
             <!-- <button class="success ico">plus</button> -->
-            <div class="item" v-for="task in tasks" :key="task.id">
+            <div class="item rounded" v-for="task in tasks" :key="task.id">
                 <task-page :id="task.id"/>
             </div>
         </div>
         <div id="new" v-else>
-            <form @submit.prevent="createTask">
+            <h1>Create new task</h1>
+            <form @submit.prevent="createTask">    
                 <button type="submit" class="success ico block">tick</button>
                 <input v-model="taskName" placeholder="Task name"/>
                 <div id="list-control">
@@ -26,14 +27,16 @@
 </template>
 
 <script>
-import TaskPage from './TaskPage'
+import TaskPage from './TaskPage';
+import id from '../../utils/idgen';
+
 export default {
     data: () => ({
         taskName: "",
         subtaskText: "",
         subtasks: [],
         isNew: false,
-        newId: 1/* ,
+        /* ,
 		isEditing: false */
 	}),
     components: {
@@ -57,20 +60,22 @@ export default {
             this.$store.dispatch("addTask", {name: this.taskName, subtasks: this.subtasks});
             this.$store.dispatch("getTasksFromDB");
             this.toggleNew();
+            this.resetAll();
         },
-        reset() {
+        resetAll() {
+            this.taskName = "";
             this.subtaskText = "";
+            this.subtasks = [];
         },
         addSubtask() {
             var subtask = { 
                 task: this.subtaskText,
-                id: this.newId,
+                id: id.generate(),
                 completed: false
             };
 
             this.subtasks.push(subtask);
-            this.newId++;
-            this.reset();
+            this.subtaskText = "";
         },
         deleteSubtask(id) {
             var index = this.subtasks.findIndex(elem => elem.id === id);
@@ -93,7 +98,6 @@ export default {
         display: grid;
         justify-content: center;
         background-color: white;
-
     }
 
     .rounded {
@@ -102,8 +106,22 @@ export default {
 
     #new {
         margin-left: 25%;
-        background-color: white;
+        border: 5px solid rgb(204, 204, 35);
         width: 50%;
+        background-color: rgb(204, 204, 35);
+    }
+
+    #new h1 {
+        color: white;
+        padding: 0px;
+        /*background-color: black;*/
+    }
+
+    #new form {
+        margin: 0 auto;
+        width: 100%;
+        background-color: white;
+        
     }
 
     .block {

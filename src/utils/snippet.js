@@ -1,14 +1,12 @@
 export default {
-    snip(text) {
-        var endIndex = text.length - 1; // end of the text, by default
-            
+    snip(text, endIndex = 200) {
+
         /* if(text.length > 250 && text.length < 1000) {
             endIndex = Math.round(text.length / 2); // return half of the text
         } 
         if(text.length > 1000) {
             endIndex = Math.round(text.length / 4); // return a quarter of the text
         } */
-        endIndex = 200;
         return text.substring(0, endIndex);
     }
 }

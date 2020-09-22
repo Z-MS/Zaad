@@ -1,6 +1,7 @@
 import snippet from '../../utils/snippet';
 import DateTime from '../../utils/DateTime';
-import db from '../../db/db'
+import id from '../../utils/idgen';
+import db from '../../db/db';
 
 export default {
     state: {
@@ -23,7 +24,11 @@ export default {
     mutations: {
         async ADD_NOTE(state, payload) {
             var [currentDate] = DateTime.getDateTime();
+            // add a snippet of the note to randomly generated characters
+            var idPrefix = id.generate();
+
             var newNote = {
+                id: idPrefix,
                 noteText: payload.noteText,
                 excerpt: snippet.snip(payload.noteText),
                 date: currentDate,
