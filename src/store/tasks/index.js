@@ -1,6 +1,5 @@
 import Finder from '../../utils/finder'
 import DateTime from '../../utils/DateTime';
-import Percentage from '../../utils/Percentage';
 import id from '../../utils/idgen';
 import db from '../../db/db';
 
@@ -122,8 +121,7 @@ export default {
                 completed: false,
                 dateCreated: currentDate,
                 completionDate: '',
-                subtasks: payload.subtasks,  // should be an array of objects
-                percent: Percentage.calcPercentage(payload.subtasks)
+                subtasks: payload.subtasks  // should be an array of objects
             }
     
             await db.addItem('Tasks', newTask);
@@ -149,7 +147,6 @@ export default {
             await db.editItem('Tasks', taskId, (parentTask) => {
                 var subtask = Finder.findItem(parentTask.subtasks, subTaskId);
                 subtask.completed = !subtask.completed;
-                parentTask.percent = Percentage.calcPercentage(parentTask.subtasks);
             });
         },
         async DELETE_TASK(state, payload) {

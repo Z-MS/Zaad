@@ -9,7 +9,7 @@
                     <circle :id="task.id" class="percent-ring" 
                     :stroke-dashoffset="circumference" r="40" cx="60%" cy="50%" stroke="lime" fill="none" stroke-width="3" stroke-linecap="round">
                     </circle>
-                    <text :x="shiftX" y="60">{{ percent }}%</text>
+                    <text :x="shiftX" y="60">{{ getPercentCompleted }}%</text>
                 </svg>
             </div>
             <form @submit.prevent="addSubtask">
@@ -60,32 +60,7 @@ export default {
         subtasks() {
             return this.task.subtasks;
         },
-        percent() {
-            if(isNaN(this.task.percent)) {
-                return 0;
-            } else {
-                return this.task.percent;
-            }
-        }
-    },
-    methods: {
-        addSubtask() {
-            const idPrefix = id.generate();
-            this.$store.dispatch("addSubtask", { id: this.id, subtask:  { id: idPrefix, task: this.subtaskText } 
-            });
-            this.$store.dispatch("getTasksFromDB");
-
-            this.subtaskText = "";
-        },
-        getOffset() {
-            var offset = this.circumference - this.percent / 100 * this.circumference ;
-            var circle = document.getElementById(this.id);
-            circle.style.strokeDasharray = `${this.circumference} ${this.circumference}`;
-            circle.style.strokeDashoffset = `${this.circumference}`;
-
-            circle.style.strokeDashoffset = offset; 
-        },
-        countComplete() {
+        getPercentCompleted() {
             const total = this.subtasks.length;
             var completedTaskCount = 0;
             this.subtasks.forEach(task => {
@@ -100,8 +75,29 @@ export default {
             }
 
             return percentCompleted;
+        }
+    },
+    methods: {
+        addSubtask() {
+            const idPrefix = id.generate();
+            this.$store.dispatch("addSubtask", { id: this.id, subtask:  { id: idPrefix, task: this.subtaskText } 
+            });
+            this.$store.dispatch("getTasksFromDB");
+
+            this.subtaskText = "";
+        },
+        
+        getOffset() {
+            var percent = this.getPercentCompleted;
+            var offset = this.circumference - percent / 100 * this.circumference;
+            var circle = document.getElementById(this.id);
+            circle.style.strokeDasharray = `${this.circumference} ${this.circumference}`;
+            circle.style.strokeDashoffset = `${this.circumference}`;
+
+            circle.style.strokeDashoffset = offset; 
         },
         async increase() {
+        // for this function to run when mounted, get the task from DB
             await this.$store.dispatch("getTasksFromDB");
             this.getOffset();
         },
