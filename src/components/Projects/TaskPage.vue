@@ -3,14 +3,7 @@
         <div class="sticky">
             <div class="row">
                 <p class="large">{{ task.name }}</p>
-                <svg @dblclick="deleteTask">
-                    <circle stroke-dasharray="0" r="40" cx="60%" cy="50%" stroke="gray" fill="none" stroke-width="5" stroke-linecap="round">
-                    </circle>
-                    <circle :id="task.id" class="percent-ring" 
-                    :stroke-dashoffset="circumference" r="40" cx="60%" cy="50%" stroke="lime" fill="none" stroke-width="3" stroke-linecap="round">
-                    </circle>
-                    <text :x="shiftX" y="60">{{ getPercentCompleted }}%</text>
-                </svg>
+                <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted"/>
             </div>
             <form @submit.prevent="addSubtask">
                 <input v-model="subtaskText" type="text" placeholder="Enter a new item"/>
@@ -19,7 +12,7 @@
         <div>
             <ul v-for="subtask in task.subtasks" :key="subtask.id">
                 <li>   
-                    <task-item :subtask="subtask" :parentTaskID="task.id" @increase-percentage="increase"/>
+                    <task-item :subtask="subtask" :parentTaskID="task.id" @increase-percentage="updateState"/>
                 </li>
             </ul>
         </div>
@@ -30,6 +23,7 @@
 
 import TaskItem from "./TaskItem";
 import id from '../../utils/idgen';
+import PercentCircle from "../PercentCircle"
 
 export default {
     data: () => ({
@@ -37,10 +31,11 @@ export default {
         subtaskText: ""
     }),
     mounted() {
-        this.increase();
+        this.updateState();
     },
     components: {
-        TaskItem
+        TaskItem,
+        PercentCircle
     },
     props: {
         id: { type: String, required: true }
@@ -48,14 +43,6 @@ export default {
     computed: {
         task() {
             return this.$store.getters.getTask(this.id)
-        },
-        shiftX() {
-            // this is to centre the text within the circle
-            var x = 40; // x-position of percent text when < 100
-            if(this.percent === 100) { 
-                x = 31; // x-position of percent text when = 100
-            }
-            return x;
         },
         subtasks() {
             return this.task.subtasks;
@@ -96,10 +83,10 @@ export default {
 
             circle.style.strokeDashoffset = offset; 
         },
-        async increase() {
+        async updateState() {
         // for this function to run when mounted, get the task from DB
             await this.$store.dispatch("getTasksFromDB");
-            this.getOffset();
+            // this.getOffset();
         },
         deleteTask() {
             this.$store.dispatch("deleteTask", this.id);
@@ -170,8 +157,7 @@ li {
     font-size: 1.5rem;
 }
 
-svg {
-    /* border: 2px solid black; */
+/* svg {
     width: 30%;
     height: 15vh;
 }
@@ -182,10 +168,10 @@ text {
 
 .percent-ring {
     transition: 0.35s stroke-dashoffset;
-    /*axis compensation*/
+    axis compensation
     transform: rotate(-90deg);
     transform-origin: 60% 50%;
-}
+} */
 
 
 </style>

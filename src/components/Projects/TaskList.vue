@@ -13,7 +13,7 @@
                 <button type="submit" class="success ico block">tick</button>
                 <input v-model="taskName" placeholder="Task name"/>
                 <div id="list-control">
-                    <input v-model="subtaskText" placeholder="Add new item"/>
+                    <input id="new-subtask" v-model="subtaskText" placeholder="Add new item"/>
                     <button type="button" class="success ico" @click="addSubtask">add</button>
                 </div>
             </form>
@@ -76,6 +76,7 @@ export default {
 
             this.subtasks.push(subtask);
             this.subtaskText = "";
+            document.getElementById('new-subtask').focus();
         },
         deleteSubtask(id) {
             var index = this.subtasks.findIndex(elem => elem.id === id);

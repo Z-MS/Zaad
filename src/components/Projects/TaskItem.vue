@@ -86,7 +86,7 @@ export default {
     content: "\ea53";
     width: 1.4rem;
     height: 1.3rem;
-    vertical-align: text-top;
+    /* vertical-align: text-top; */
     border: 0.1rem solid transparent;
     border-radius: 10%;
 
