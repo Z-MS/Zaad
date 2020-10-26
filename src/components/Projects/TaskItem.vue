@@ -1,13 +1,11 @@
 <template>
     <div>
-        <span v-if="!isEditing" @dblclick="toggleEdit">
-            <label class="checkbox-label" :class="{completed: subtask.completed}">
-                {{ subtask.task }}
-                <input type="checkbox" :checked="subtask.completed" @click="toggleComplete(subtask.id)"/>
-                <span class="checkmark"></span>
-            </label>
-            <a class="ico option" @click="toggleEdit">circle-down</a>
-            <!-- <dialog></dialog> -->
+        <span v-if="!isEditing" @dblclick="toggleEdit" class="row">
+            <checkbox :item="subtask" @toggle="toggleComplete"/>
+            <span class="ico option popup" @click="showPopup" >
+                circle-down
+                <span class="popup-bar">HELLO</span>
+            </span>
         </span>
         <form @submit.prevent="saveChanges" v-else>
             <input type="text" v-model="newText"/>
@@ -18,12 +16,16 @@
 </template>
 
 <script>
+import Checkbox from '../Checkbox'
 export default {
     data: () => ({
         isEditing: false,
         editedText: "",
         edited: false
     }),
+    components: {
+        Checkbox
+    },
     computed: {
         newText: {
             get() {
@@ -43,6 +45,10 @@ export default {
         toggleEdit() {
             this.isEditing = !this.isEditing 
         },
+        showPopup(event) {
+            var popup = event.target.children[0];
+            popup.classList.toggle("show");
+        },
         saveChanges() {
             if(this.edited) {
                 this.$store.dispatch("editSubtask", { text: this.editedText, subTaskId: this.subtask.id, taskId: this.parentTaskID });
@@ -58,61 +64,64 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
-.checkbox-label {
-    display: inline-block;
-    position: relative;
-    padding-left: 35px;
-    margin: 0 auto; 
-    text-align: justify;
-    width: 85%;
+.row {
+    display: flex;
 }
-
-.checkbox-label input[type="checkbox"] {
-    display: none;
-}
-
-.checkmark {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.checkbox-label input[type="checkbox"] ~ .checkmark::after {
-    display: block;
-    font-family: 'IcoMoon';
-    content: "\ea53";
-    width: 1.4rem;
-    height: 1.3rem;
-    /* vertical-align: text-top; */
-    border: 0.1rem solid transparent;
-    border-radius: 10%;
-
-}
-
-.checkbox-label input[type="checkbox"]:checked ~ .checkmark::after {
-    display: block;
-    font-family: 'IcoMoon'; 
-    content: "\ea52";
-    width: 1.35rem;
-    height: 1.3rem;
-    background: teal;
-    color: white;
-    text-align: center;
-    /*border-color: teal*/
-}
-
-.completed {
-    text-decoration: line-through solid rgb(83, 82, 82);
-}
-
 .option {
+    margin-right: 1rem;
     opacity: 0;
 }
 
-.option:hover {
+/* .option:hover {
     opacity: 1
+} */
+span.row:hover {
+    .option {
+        opacity: 1;
+    }
+}
+.popup {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+}
+
+.popup .popup-bar {
+    visibility: hidden;
+    width: 160px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -130px;
+}
+/* arrow beneath the popup */
+.popup .popup-bar::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.popup .show {
+    visibility: visible;
+    animation: fadeIn 1s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 </style>

@@ -22,11 +22,12 @@
     --success: rgb(17, 204, 17);
     --danger: red;
     --change: royalblue; 
+    --deepblue: #02021a;
 }
 
 body {
 	// background: linear-gradient(45deg, #6cfd9f, #6887ff);
-    background-color: #02021a;
+    background-color: var(--deepblue);
 	min-height: 100vh;
 	overflow: auto;
 	// margin: 0;

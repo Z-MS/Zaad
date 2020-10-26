@@ -2,8 +2,8 @@
     <div class="background">
         <div class="sticky">
             <div class="row">
-                <p class="large">{{ task.name }}</p>
-                <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted"/>
+                <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
+                <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted" />
             </div>
             <form @submit.prevent="addSubtask">
                 <input v-model="subtaskText" type="text" placeholder="Enter a new item"/>
@@ -108,6 +108,7 @@ export default {
 
 .sticky {
     position: sticky;
+    margin-bottom: 1rem;
     top: 0px;
     background-color: white;
 }
@@ -130,6 +131,7 @@ export default {
 }
 
 .large {
+    width: 60%;
     font-family: 'Nunito bold';
     font-size: 2em;
     text-align: center;
@@ -137,6 +139,12 @@ export default {
 
 .medium-text {
     font-size: 1.5rem;
+}
+
+ul {
+    margin-bottom: 1rem;
+    margin-left: 1.6rem;
+    /* centre this and make the bottom reasonably spaced */
 }
 
 li {

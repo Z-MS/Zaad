@@ -1,11 +1,12 @@
 <template>
-        <form @submit.prevent="saveChanges">
-            <button class="success ico" type="submit">&#xea10;</button>
-            <button class="danger ico" type="button" @click="close">&#xea0f;</button>
-            <!-- <resizable-text> -->
-                <textarea cols="150" rows="20" spellcheck="false" v-model="newText"/>
-            <!-- </resizable-text> -->
-        </form>
+    <form @submit.prevent="saveChanges">
+        <button class="success ico" type="submit">&#xea10;</button>
+        <button class="danger ico" type="button" @click="close">&#xea0f;</button>
+        <button type="button" class="danger ico" @click="deleteNote(id)">bin</button>
+        <!-- Flip the value of willFocus, the binding works one way, so it doesn't change until after the dialog has opened, and not before -->
+
+        <textarea cols="150" rows="20" spellcheck="false" v-model="newText"/>
+    </form>
 </template>
 
 <script>
@@ -20,13 +21,10 @@ export default {
         text: { type: String },
         id: { type: String, required: true }
     },
-    /* components: {
-        ResizableText
-    }, */
     computed: {
         newText: {
             get() {
-                return this.text
+                return this.text;
             },
             set(value) {
                 this.edited = true;
@@ -36,7 +34,6 @@ export default {
     }, 
     methods: {
         close() {
-            // this.$router.push({name: 'Notes'});
             this.$emit('close-edit');
         },
         saveChanges() {
@@ -45,6 +42,10 @@ export default {
                 this.$store.dispatch("getNotesFromDB");
             }
             this.close();
+        },
+        deleteNote(id) {
+            this.$store.dispatch("deleteNote", id);
+            this.$store.dispatch('getNotesFromDB');
         }
     }
 }

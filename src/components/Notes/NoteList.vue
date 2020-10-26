@@ -10,8 +10,9 @@
 						<dialog :id="String(note.id)">
 							<edit-note :text="note.noteText" :id="String(note.id)" @close-edit="close(note.id)"/>
 						</dialog> 
-						<p class="note-text">
-						<router-link :to="`note/${note.id}`">{{ note.excerpt }}</router-link></p>
+						<p class="note-text" @click="show(note.id)">
+							{{ note.excerpt }}
+						</p>
 					</div>
 				</div>
 		</div>
@@ -34,8 +35,7 @@ import EditNote from './EditNote'
 export default {
 	data: () => ({
 		noteText: "",
-		isNew: false/* ,
-		isEditing: false */
+		isNew: false
 	}),
 	components: {
 		ResizableText, EditNote
@@ -48,7 +48,6 @@ export default {
 	computed: {
 		notes() {
 			// returns an array of objects
-
 			return this.$store.getters.getNotes
 		}
 	},
@@ -56,10 +55,7 @@ export default {
 		toggleNew() {
 			this.noteText = "";
 			this.isNew = !this.isNew;
-		}/* ,
-		toggleEdit() {
-			this.isEditing = !this.isEditing;
-		} */,
+		},
 		createNote() {
 			if(this.noteText) {
 				this.$store.dispatch("addNote", { noteText: this.noteText });
@@ -80,6 +76,7 @@ export default {
 			var diag = document.getElementById(id);
 			diag.close();
 		}
+		
 	}
 
 }
