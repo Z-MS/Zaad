@@ -136,26 +136,27 @@ export default {
                 task.subtasks.push(payload.subtask);
             })
         },
-        async EDIT_SUBTASK(state, {text, subTaskId, taskId}) {
+        async EDIT_SUBTASK(state, {text, subtaskId, taskId}) {
             await db.editItem('Tasks', taskId, (parentTask) => {
-                var subtask = Finder.findItem(parentTask.subtasks, subTaskId);
+                var subtask = Finder.findItem(parentTask.subtasks, subtaskId);
                 subtask.task = text;
 
             });
         },
-        async TOGGLE_SUBTASK(state, {subTaskId, taskId}) {           
+        async TOGGLE_SUBTASK(state, {subtaskId, taskId}) {           
             await db.editItem('Tasks', taskId, (parentTask) => {
-                var subtask = Finder.findItem(parentTask.subtasks, subTaskId);
+                var subtask = Finder.findItem(parentTask.subtasks, subtaskId);
                 subtask.completed = !subtask.completed;
             });
         },
         async DELETE_TASK(state, payload) {
             await db.deleteItem('Tasks', payload);
         },
-        async DELETE_SUBTASK(state, {subTaskId, taskId}) {
-            var parentTask = Finder.findItem(state.tasks, taskId);
-            var index = parentTask.subtasks.findIndex(elem => elem.id === subTaskId);
-            parentTask.subtasks.splice(index, 1);
+        async DELETE_SUBTASK(state, {subtaskId, taskId}) {
+            await db.editItem('Tasks', taskId, (parentTask) => {
+                var index = parentTask.subtasks.findIndex(elem => elem.id === subtaskId);
+                parentTask.subtasks.splice(index, 1);
+            });
         }
     
       },

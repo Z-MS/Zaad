@@ -1,11 +1,18 @@
 <template>
     <div>
-        <span v-if="!isEditing" @dblclick="toggleEdit" class="row">
+        <span v-if="!isEditing" class="row">
             <checkbox :item="subtask" @toggle="toggleComplete"/>
             <span class="ico option popup" @click="showPopup" >
                 circle-down
-                <span class="popup-bar">HELLO</span>
+                <span class="popup-bar">
+                    <ul>
+                        <li class="ico highlight--white" @click="openDialog">write</li>
+                        <li class="ico highlight--white">copy</li>
+                        <li class="ico highlight--white" @click="openDialog">bin</li>
+                    </ul>
+                </span>
             </span>
+            <confirm-dialog v-if="isOpen" :open="isOpen" @accept="getMessage" @cancel="getMessage"></confirm-dialog>
         </span>
         <form @submit.prevent="saveChanges" v-else>
             <input type="text" v-model="newText"/>
@@ -17,14 +24,18 @@
 
 <script>
 import Checkbox from '../Checkbox'
+import ConfirmDialog from '../ConfirmDialog'
+
 export default {
     data: () => ({
         isEditing: false,
         editedText: "",
-        edited: false
+        edited: false,
+        isOpen: false
     }),
     components: {
-        Checkbox
+        Checkbox,
+        ConfirmDialog
     },
     computed: {
         newText: {
@@ -46,19 +57,38 @@ export default {
             this.isEditing = !this.isEditing 
         },
         showPopup(event) {
+            // Get the popup-bar
             var popup = event.target.children[0];
-            popup.classList.toggle("show");
+        
+            if(popup) {
+                popup.classList.toggle("show");
+            }            
         },
         saveChanges() {
             if(this.edited) {
-                this.$store.dispatch("editSubtask", { text: this.editedText, subTaskId: this.subtask.id, taskId: this.parentTaskID });
+                this.$store.dispatch("editSubtask", { text: this.editedText, subtaskId: this.subtask.id, taskId: this.parentTaskID });
                 this.$store.dispatch("getTasksFromDB");
             }
             this.toggleEdit();
         },
-        toggleComplete(childID) {
-            this.$store.dispatch("toggleSubtask", { subTaskId: childID, taskId: this.parentTaskID });
+        toggleComplete() {
+            this.$store.dispatch("toggleSubtask", { subtaskId: this.subtask.id, taskId: this.parentTaskID });
             this.$emit('increase-percentage');
+        },
+        getMessage(message) {
+            this.isOpen = !this.isOpen;
+            if(message) {
+                this.deleteSubtask();
+            }
+        },
+        openDialog(event) {
+		/* span > ul > li. We're getting the grandparent of the list element which is the span, that's why 'parentNode' appears twice. The code below closes the popup toolbar */
+			event.target.parentNode.parentNode.classList.toggle("show");
+            this.isOpen = !this.isOpen;
+        },
+        deleteSubtask() { 
+            this.$store.dispatch("deleteSubtask", { subtaskId: this.subtask.id, taskId: this.parentTaskID });
+            this.$store.dispatch("getTasksFromDB");
         }
     }
 }
@@ -91,17 +121,17 @@ span.row:hover {
 
 .popup .popup-bar {
     visibility: hidden;
-    width: 160px;
+    width: 120px;
     background-color: #555;
     color: #fff;
     text-align: center;
-    border-radius: 6px;
+    // border-radius: 6px;
     padding: 8px 0;
     position: absolute;
     z-index: 1;
     bottom: 125%;
     left: 50%;
-    margin-left: -130px;
+    margin-left: -90px;
 }
 /* arrow beneath the popup */
 .popup .popup-bar::after {
@@ -109,15 +139,20 @@ span.row:hover {
     position: absolute;
     top: 100%;
     left: 50%;
-    margin-left: -5px;
+    margin-left: -10px;
     border-width: 5px;
     border-style: solid;
-    border-color: #555 transparent transparent transparent;
+    // border-color: #555 transparent transparent transparent;
 }
 
 .popup .show {
     visibility: visible;
     animation: fadeIn 1s;
+}
+
+.popup-bar li {
+    display: inline;
+    padding: 0.3rem 0.4rem 0.5rem 0.3rem;
 }
 
 @keyframes fadeIn {

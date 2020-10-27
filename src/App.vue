@@ -123,4 +123,9 @@ ul {
 .nunito-bold {
     font-family: 'Nunito bold';
 }
+
+.highlight--white:hover {
+    background-color: white;
+    color: black;
+}
 </style>
