@@ -1,32 +1,30 @@
 <template>
-    <!-- <div class="container">
-        <button class="success">Create a new project</button>
-        <div class="grid">
-            <div @click="$router.push({name: 'ProjectPage', params: { id: project.id }})" class="item" v-for="project in projects" :key="project.id">
-                <div class="projectHead">
-                    <h1>{{ project.name }}</h1><span>70%</span>
-                    <p>{{ project.description }}</p>
-                    
-                </div>
-                <ul v-for="task in tasks(project.taskIDs)" :key="task.id">
-                    <li>{{ task.name }}</li>
+    <div class="grid">
+        <div class="item" v-for="project in projects" :key="project.id">
+            <div class="project-head">
+                <span class="ico info-icon">radio-button2</span>
+                <h1>{{ project.name }}</h1>
+                <p id="description">{{ project.description }}</p>
+            </div>
+            <div>
+                <ul>
+                    <li><span class="ico">flag</span><p class="info-text">{{ project.dates.startDate }}</p>
+                    <li><span class="ico">todo</span><p class="info-text">{{ project.taskIDs.length }} tasks </p></li>
                 </ul>
             </div>
         </div>
-    </div> -->
-    <h1>Work in progress. Check back later</h1>
+    </div>
 </template>
 
 <script>
 // import ProjectPage from './ProjectPage'
 
-/*export default {
+export default {
     data: () => ({
-        isEditing: false
+        
     }),
-    /* components: {
-        ProjectPage
-    } ,
+    components: {
+    },
     computed: {
         projects() {
             return this.$store.getters.getProjects
@@ -37,7 +35,8 @@
             return this.$store.getters.getTasks(taskIDs)
         }
     }
-}*/
+}
+
 </script>
 
 <style scoped>
@@ -46,8 +45,8 @@
     }
 
     .grid {
-        width: 65%;
-        margin-left: 33%;
+        width: 70%;
+        margin-left: 25%;
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
@@ -58,28 +57,25 @@
     .item {
         display: grid;
         background-color: white;
-        position: relative;
+        border-radius: 0.5rem;
     }
 
-    .projectHead {
-        background-color: black;
+
+    .project-head {
+        background-color: rgb(53, 51, 51);
+        color: white;
     }
-    
-    .projectHead > p {
+
+    .info-text {
+        display: inline-block;
+        margin-left: 1rem;
+    }
+
+    .info-icon {
+        color: red;
+    }
+
+    #description {
         text-align: center;
-        color: rgb(83, 97, 126);
     }
-
-    .projectHead > span {
-        position: absolute;
-        border: 1px solid white;
-        right: 0px;
-        color: wheat;
-    }
-
-    h1 {
-        display: inline;
-        color: grey;
-    }
-
 </style>

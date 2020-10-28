@@ -8,7 +8,9 @@
 							<button @click="show(note.id)" class="pen ico">&#xe905;</button>
 						</div>
 						<dialog :id="String(note.id)">
-							<edit-note :text="note.noteText" :id="String(note.id)" @close-edit="close(note.id)"/>
+							<div class="header-bar">
+								<edit-note :text="note.noteText" :id="String(note.id)" @close-edit="close(note.id)"/>
+							</div>
 						</dialog> 
 						<p class="note-text" @click="show(note.id)">
 							{{ note.excerpt }}
@@ -30,7 +32,8 @@
 
 <script>
 import ResizableText from '../ResizableText';
-import EditNote from './EditNote'
+
+import EditNote from './EditNote';
 
 export default {
 	data: () => ({

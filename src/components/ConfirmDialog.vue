@@ -1,8 +1,8 @@
 <template>
-    <dialog>
+    <dialog :class="{ opened: open }">
         <p><b>Are you sure you want to <slot>do this</slot>?</b></p>
-        <button class="success" @click="accept">Yes</button>
-        <button class="danger" @click="cancel">No</button>
+        <button class="success" @click="close(true)">Yes</button>
+        <button class="danger" @click="close(false)">No</button>
     </dialog>
 </template>
 
@@ -13,17 +13,18 @@ export default {
     },
     mounted() {
         if(this.open) {
-            document.querySelector('dialog').showModal();
+            document.querySelector('.opened').showModal();
         }
     },
     methods: {
-        accept() {
-            this.$emit('accept', true);
-            document.querySelector('dialog').close();
-        },
-        cancel() {
-            this.$emit('cancel', false);
-            document.querySelector('dialog').close();
+        close(message) {
+            document.querySelector('.opened').close();
+
+            if(message) {
+                this.$emit('close', true);
+            } else {
+                this.$emit('close', false);
+            }
         }
     }
 }

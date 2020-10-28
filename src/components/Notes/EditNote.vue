@@ -1,25 +1,31 @@
 <template>
-    <form @submit.prevent="saveChanges">
-        <button class="success ico" type="submit">&#xea10;</button>
-        <button class="danger ico" type="button" @click="close">&#xea0f;</button>
-        <button type="button" class="danger ico" @click="deleteNote(id)">bin</button>
-        <!-- Flip the value of willFocus, the binding works one way, so it doesn't change until after the dialog has opened, and not before -->
+    <div>
+        <form @submit.prevent="saveChanges">
+            <button class="success ico" type="submit">&#xea10;</button>
+            <button class="danger ico" type="button" @click="close">&#xea0f;</button>
+            <button type="button" class="danger ico" @click="toggleDialog">bin</button>
 
-        <textarea cols="150" rows="20" spellcheck="false" v-model="newText"/>
-    </form>
+            <textarea cols="150" rows="20" spellcheck="false" v-model="newText"/>
+        </form>
+        <confirm-dialog v-if="isOpen" :open="isOpen" @close="getMessage">delete this note</confirm-dialog>
+    </div>
 </template>
 
 <script>
-// import ResizableText from '../ResizableText'
+import ConfirmDialog from '../ConfirmDialog';
 
 export default {
     data: () => ({
         editedText: "",
-        edited: false
+        edited: false,
+        isOpen: false
     }),
     props: {
         text: { type: String },
         id: { type: String, required: true }
+    },
+    components: {
+        ConfirmDialog
     },
     computed: {
         newText: {
@@ -46,6 +52,15 @@ export default {
         deleteNote(id) {
             this.$store.dispatch("deleteNote", id);
             this.$store.dispatch('getNotesFromDB');
+        },
+        toggleDialog() {
+            this.isOpen = !this.isOpen;
+        },
+        getMessage(message) {
+            if(message) {
+                this.deleteNote(this.id);
+            }
+            this.toggleDialog();
         }
     }
 }

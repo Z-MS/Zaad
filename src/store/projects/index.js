@@ -21,7 +21,7 @@ export default {
             {
                 id: "2",
                 name: "Proj2",
-                description: "Project manager2",
+                description: "Project manager for other stuff",
                 notes: "notes and stuff", // probably make this an array
                 completed: false,
                 dates: {

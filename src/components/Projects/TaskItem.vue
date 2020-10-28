@@ -2,9 +2,9 @@
     <div>
         <span v-if="!isEditing" class="row">
             <checkbox :item="subtask" @toggle="toggleComplete"/>
-            <span class="ico option popup" @click="showPopup" >
+            <span class="ico option popup" @click="showPopup">
                 circle-down
-                <span class="popup-bar">
+                <span class="popup-bar" :class="{ show: popped }">
                     <ul>
                         <li class="ico highlight--white" @click="openDialog">write</li>
                         <li class="ico highlight--white">copy</li>
@@ -12,7 +12,7 @@
                     </ul>
                 </span>
             </span>
-            <confirm-dialog v-if="isOpen" :open="isOpen" @accept="getMessage" @cancel="getMessage"></confirm-dialog>
+            <confirm-dialog v-if="isOpen" :open="isOpen" @close="getMessage"></confirm-dialog>
         </span>
         <form @submit.prevent="saveChanges" v-else>
             <input type="text" v-model="newText"/>
@@ -28,10 +28,11 @@ import ConfirmDialog from '../ConfirmDialog'
 
 export default {
     data: () => ({
-        isEditing: false,
-        editedText: "",
-        edited: false,
-        isOpen: false
+        isEditing: false, // for toggling the task name edit input field
+        editedText: "", // used to hold a copy of the subtask text's prop to avoid direct mutation
+        edited: false,  // this is toggled to true when saving changes after editing the subtask's text
+        isOpen: false, // this is used for opening the confirmation dialog
+        popped: false // this is used for showing the popup bar
     }),
     components: {
         Checkbox,
@@ -56,13 +57,8 @@ export default {
         toggleEdit() {
             this.isEditing = !this.isEditing 
         },
-        showPopup(event) {
-            // Get the popup-bar
-            var popup = event.target.children[0];
-        
-            if(popup) {
-                popup.classList.toggle("show");
-            }            
+        showPopup() {
+            this.popped = !this.popped;           
         },
         saveChanges() {
             if(this.edited) {
@@ -81,9 +77,8 @@ export default {
                 this.deleteSubtask();
             }
         },
-        openDialog(event) {
-		/* span > ul > li. We're getting the grandparent of the list element which is the span, that's why 'parentNode' appears twice. The code below closes the popup toolbar */
-			event.target.parentNode.parentNode.classList.toggle("show");
+        openDialog() {
+            document.querySelector('.show').classList.toggle('show');
             this.isOpen = !this.isOpen;
         },
         deleteSubtask() { 
