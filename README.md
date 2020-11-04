@@ -1,4 +1,4 @@
-# ztask
+# Zaad
 
 ## Project setup
 ```
