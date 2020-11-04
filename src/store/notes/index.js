@@ -21,8 +21,8 @@ export default {
             } */
         ] 
     },
-    mutations: {
-        async ADD_NOTE(state, payload) {
+    actions: {
+        async addNote(context, payload) {
             var [currentDate] = DateTime.getDateTime();
             // add a snippet of the note to randomly generated characters
             var idPrefix = id.generate();
@@ -36,29 +36,17 @@ export default {
             }
 
             await db.addItem('Notes', newNote);
-
         },
-        async DELETE_NOTE(state, payload) {
-            await db.deleteItem('Notes', payload); 
+        async deleteNote(context, payload) {
+            await db.deleteItem('Notes', payload);
         },
-        async EDIT_NOTE(state, payload) {
+        async editNote(context, payload) {
             payload.excerpt = snippet.snip(payload.text);
         
             await db.editItem('Notes', payload.id, (data) => {
                 data.noteText = payload.text;
                 data.excerpt = payload.excerpt;
             });
-        }
-    },
-    actions: {
-        addNote: (context, payload) => {
-            context.commit("ADD_NOTE", payload)
-        },
-        deleteNote(context, payload) {
-            context.commit("DELETE_NOTE", payload);
-        },
-        editNote: (context, payload) => {
-            context.commit("EDIT_NOTE", payload)
         },
         async getNotesFromDB(context) {
             var notes = await db.getItems('Notes');

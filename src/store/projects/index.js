@@ -40,8 +40,8 @@ export default {
             // return state.projects.find(elem => elem.id === id);
         }
     },
-    mutations: {
-        async ADD_PROJECT(state, payload) {
+    actions: {
+        addProject: (context, payload) => {
             var [currentDate] = DateTime.getDateTime();
             var newProject = {
                 id: payload.id, // constant
@@ -59,7 +59,7 @@ export default {
 
             await db.addItem('Projects', newProject);
         },
-        EDIT_PROJECT(state, payload) {
+        editProject: (context, payload) => {
             // project name, description,notes
             var project = Finder.findItem(state.projects, payload.id);
             switch(payload.field) {
@@ -73,26 +73,12 @@ export default {
                     project.notes = payload.content;
             }
         },
-        async DELETE_PROJECT(state, payload) {
+        deleteProject: (context, payload) => {
             await db.deleteItem('Projects', payload);
         },
-        COMPLETE_PROJECT(state, payload) {
-            var project = state.projects.find(elem => elem.id === payload.id);
-            project.completed = !project.completed; 
-        }
-    },
-    actions: {
-        addProject: (context, payload) => {
-            context.commit("ADD_PROJECT", payload);
-        },
-        editProject: (context, payload) => {
-            context.commit("EDIT_PROJECT", payload);
-        },
-        deleteProject: (context, payload) => {
-            context.commit("DELETE_PROJECT", payload);
-        },
         completeProject: (context, payload) => {
-            context.commit("COMPLETE_PROJECT", payload);
+            var project = state.projects.find(elem => elem.id === payload.id);
+            project.completed = !project.completed;
         },
         async getProjectsFromDB() {
             await db.getItems('Projects');

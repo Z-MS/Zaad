@@ -108,79 +108,54 @@ export default {
             return Finder.findItem(state.tasks, id);            // return state.tasks.find(elem => elem.id === id);
         },
         getTasks: state =>  state.tasks //rewrite this function to accept args
-      },
-      mutations: {
-// Since tasks and subtasks are very similar and are coupled together, put their functionalities in the same function for now
-        async ADD_TASK(state, payload) {
-            var [currentDate] = DateTime.getDateTime();
-            var idPrefix = id.generate();
-
-            var newTask = {
-                id: idPrefix,
-                name: payload.name,
-                completed: false,
-                dateCreated: currentDate,
-                completionDate: '',
-                subtasks: payload.subtasks  // should be an array of objects
-            }
-    
-            await db.addItem('Tasks', newTask);
-        },
-        async RENAME_TASK(state, payload) {
-            await db.editItem('Tasks', payload.id, (task) => {
-                task.name = payload.text;
-            });
-        },
-        async ADD_SUBTASK(state, payload) {
-            await db.editItem('Tasks', payload.id, (task) => {
-                task.subtasks.push(payload.subtask);
-            })
-        },
-        async EDIT_SUBTASK(state, {text, subtaskId, taskId}) {
-            await db.editItem('Tasks', taskId, (parentTask) => {
-                var subtask = Finder.findItem(parentTask.subtasks, subtaskId);
-                subtask.task = text;
-
-            });
-        },
-        async TOGGLE_SUBTASK(state, {subtaskId, taskId}) {           
-            await db.editItem('Tasks', taskId, (parentTask) => {
-                var subtask = Finder.findItem(parentTask.subtasks, subtaskId);
-                subtask.completed = !subtask.completed;
-            });
-        },
-        async DELETE_TASK(state, payload) {
-            await db.deleteItem('Tasks', payload);
-        },
-        async DELETE_SUBTASK(state, {subtaskId, taskId}) {
-            await db.editItem('Tasks', taskId, (parentTask) => {
-                var index = parentTask.subtasks.findIndex(elem => elem.id === subtaskId);
-                parentTask.subtasks.splice(index, 1);
-            });
-        }
-    
-      },
+      },  
       actions: {
-            addTask: (context, payload) => {
-                context.commit("ADD_TASK", payload)
+            async addTask (context, payload) {
+                var [currentDate] = DateTime.getDateTime();
+                var idPrefix = id.generate();
+
+                var newTask = {
+                    id: idPrefix,
+                    name: payload.name,
+                    completed: false,
+                    dateCreated: currentDate,
+                    completionDate: '',
+                    subtasks: payload.subtasks  // should be an array of objects
+                }
+    
+                await db.addItem('Tasks', newTask);
             },
-            addSubtask: (context, payload) => {
-                context.commit("ADD_SUBTASK", payload)
+            async addSubtask(context, payload) {
+                await db.editItem('Tasks', payload.id, (task) => {
+                    task.subtasks.push(payload.subtask);
+                })
             },
-            toggleSubtask: (context, payload) => {
-                context.commit("TOGGLE_SUBTASK", payload)
-            } ,
-            renameTask: (context, payload) => {
-                context.commit("EDIT_TASK", payload)
+            async toggleSubtask(context, { taskId, subtaskId }) {
+                await db.editItem('Tasks', taskId, (parentTask) => {
+                    var subtask = Finder.findItem(parentTask.subtasks, subtaskId);
+                    subtask.completed = !subtask.completed;
+                });
             },
-            editSubtask: (context, payload) => {
-                context.commit("EDIT_SUBTASK", payload)
+            async renameTask(context, payload) {
+                await db.editItem('Tasks', payload.id, (task) => {
+                    task.name = payload.text;
+                });
             },
-            deleteTask: (context, payload) => {
-                context.commit("DELETE_TASK", payload)
+            async editSubtask(context, { taskId, subtaskId }) {
+                await db.editItem('Tasks', taskId, (parentTask) => {
+                    var subtask = Finder.findItem(parentTask.subtasks, subtaskId);
+                    subtask.task = text;
+    
+                });
             },
-            deleteSubtask: (context, payload) => {
-                context.commit("DELETE_SUBTASK", payload)
+            async deleteTask(context, payload) {
+                await db.deleteItem('Tasks', payload);
+            },
+            async deleteSubtask (context, { taskId, subtaskId }) {
+                await db.editItem('Tasks', taskId, (parentTask) => {
+                    var index = parentTask.subtasks.findIndex(elem => elem.id === subtaskId);
+                    parentTask.subtasks.splice(index, 1);
+                });
             },
             async getTasksFromDB(context) {
                 var tasks = await db.getItems('Tasks');
