@@ -41,7 +41,7 @@ export default {
         }
     },
     actions: {
-        addProject: (context, payload) => {
+        async addProject(context, payload) {
             var [currentDate] = DateTime.getDateTime();
             var newProject = {
                 id: payload.id, // constant
@@ -59,9 +59,9 @@ export default {
 
             await db.addItem('Projects', newProject);
         },
-        editProject: (context, payload) => {
+        async editProject(context, payload) {
             // project name, description,notes
-            var project = Finder.findItem(state.projects, payload.id);
+            var project = Finder.findItem(context.state.projects, payload.id);
             switch(payload.field) {
                 case 'name': 
                     project.name = payload.content;
@@ -73,11 +73,11 @@ export default {
                     project.notes = payload.content;
             }
         },
-        deleteProject: (context, payload) => {
+        async deleteProject (context, payload) {
             await db.deleteItem('Projects', payload);
         },
         completeProject: (context, payload) => {
-            var project = state.projects.find(elem => elem.id === payload.id);
+            var project = context.state.projects.find(elem => elem.id === payload.id);
             project.completed = !project.completed;
         },
         async getProjectsFromDB() {

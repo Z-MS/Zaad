@@ -92,14 +92,17 @@ export default {
             if(this.taskName == "")  this.taskName = "Task name";  
         },
         createTask() {
-            this.$store.dispatch("addTask", {name: this.taskName, subtasks: this.subtasks});
+            this.$store.dispatch("addTask", {
+                name: this.taskName, 
+                subtasks: this.subtasks
+            });
             this.$store.dispatch("getTasksFromDB");
             this.toggleNew();
             this.resetAll();
         },
         addSubtask() {
             var subtask = { 
-                task: this.subtaskText,
+                name: this.subtaskText,
                 id: id.generate(),
                 completed: false
             };
@@ -112,7 +115,6 @@ export default {
             this.subtasks.splice(index, 1);
         },
         triggerAddButton() {
-
             const input = document.getElementById('new-subtask');
             input.addEventListener("keyup", (event) => {
                 // 13 is the code for the "Enter" key on the keyboard

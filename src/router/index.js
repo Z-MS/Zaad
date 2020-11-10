@@ -5,7 +5,7 @@ import TodoList from '../components/Todo/TodoList.vue'
 import NoteList from '../components/Notes/NoteList.vue'
 import NoteContent from '../components/Notes/NoteContent.vue'
 import EditNote from '../components/Notes/EditNote.vue'
-import ProjectList from '../components/Projects/ProjectList.vue'
+// import ProjectList from '../components/Projects/ProjectList.vue'
 import ProjectPage from '../components/Projects/ProjectPage.vue'
 import TaskList from '../components/Projects/TaskList.vue'
 import TaskPage from '../components/Projects/TaskPage.vue'
@@ -52,7 +52,7 @@ Vue.use(VueRouter)
   {
     path: '/projects',
     name: 'Projects',
-    component: ProjectList
+    component: () => import('../components/Projects/ProjectList.vue')
   },
   {
     path: '/project/:id',

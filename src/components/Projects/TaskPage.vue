@@ -67,26 +67,18 @@ export default {
     methods: {
         addSubtask() {
             const idPrefix = id.generate();
-            this.$store.dispatch("addSubtask", { id: this.id, subtask:  { id: idPrefix, task: this.subtaskText } 
+            this.$store.dispatch("handleTask", {
+                taskId: this.id, 
+                subtask:  { id: idPrefix, name: this.subtaskText },
+                command: 'ADD_SUBTASK' 
             });
             this.$store.dispatch("getTasksFromDB");
 
             this.subtaskText = "";
         },
-        
-        getOffset() {
-            var percent = this.getPercentCompleted;
-            var offset = this.circumference - percent / 100 * this.circumference;
-            var circle = document.getElementById(this.id);
-            circle.style.strokeDasharray = `${this.circumference} ${this.circumference}`;
-            circle.style.strokeDashoffset = `${this.circumference}`;
-
-            circle.style.strokeDashoffset = offset; 
-        },
         async updateState() {
         // for this function to run when mounted, get the task from DB
             await this.$store.dispatch("getTasksFromDB");
-            // this.getOffset();
         },
         deleteTask() {
             this.$store.dispatch("deleteTask", this.id);

@@ -141,11 +141,35 @@ export default {
                     task.name = payload.text;
                 });
             },
-            async editSubtask(context, { taskId, subtaskId }) {
+            async editSubtask(context, { taskId, subtaskId, text }) {
                 await db.editItem('Tasks', taskId, (parentTask) => {
                     var subtask = Finder.findItem(parentTask.subtasks, subtaskId);
                     subtask.task = text;
-    
+                });
+            },
+            async handleTask(context, payload) {
+                await db.editItem('Tasks', payload.taskId, (task) => {
+                    const parentTask = task;
+
+                    if(payload.subtaskId) {
+                        task = Finder.findItem(task.subtasks, payload.subtaskId);
+                    }
+
+                    switch(payload.command) {
+                        case 'ADD_SUBTASK':
+                            task.subtasks.push(payload.subtask);
+                            break;
+                        case 'TOGGLE':
+                            task.completed = !task.completed;
+                            break;
+                        case 'EDIT':
+                            task.name = payload.name;
+                            break;
+                        case 'DELETE_SUBTASK':
+                            var index = parentTask.subtasks.findIndex(elem => elem.id === payload.subtaskId);
+                            parentTask.subtasks.splice(index, 1);
+                            break;      
+                    }
                 });
             },
             async deleteTask(context, payload) {
@@ -153,7 +177,7 @@ export default {
             },
             async deleteSubtask (context, { taskId, subtaskId }) {
                 await db.editItem('Tasks', taskId, (parentTask) => {
-                    var index = parentTask.subtasks.findIndex(elem => elem.id === subtaskId);
+                    const index = parentTask.subtasks.findIndex(elem => elem.id === subtaskId);
                     parentTask.subtasks.splice(index, 1);
                 });
             },
@@ -161,7 +185,6 @@ export default {
                 var tasks = await db.getItems('Tasks');
                 context.state.tasks = tasks;
             }
-
       }
 }
 /* TASK: Create a utility for generating or at least incrementing IDs(if created manually)

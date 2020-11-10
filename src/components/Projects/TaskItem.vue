@@ -6,7 +6,7 @@
                 circle-down
                 <span class="popup-bar" :class="{ show: popped }">
                     <ul>
-                        <li class="ico highlight--white" @click="openDialog">write</li>
+                        <li class="ico highlight--white" @click="toggleEdit">write</li>
                         <li class="ico highlight--white">copy</li>
                         <li class="ico highlight--white" @click="openDialog">bin</li>
                     </ul>
@@ -62,13 +62,22 @@ export default {
         },
         saveChanges() {
             if(this.edited) {
-                this.$store.dispatch("editSubtask", { text: this.editedText, subtaskId: this.subtask.id, taskId: this.parentTaskID });
+                this.$store.dispatch("handleTask", {
+                    name: this.editedText, 
+                    subtaskId: this.subtask.id, 
+                    taskId: this.parentTaskID, 
+                    command: 'EDIT' 
+                });
                 this.$store.dispatch("getTasksFromDB");
             }
             this.toggleEdit();
         },
         toggleComplete() {
-            this.$store.dispatch("toggleSubtask", { subtaskId: this.subtask.id, taskId: this.parentTaskID });
+            this.$store.dispatch("handleTask", {
+                subtaskId: this.subtask.id,
+                taskId: this.parentTaskID, 
+                command: 'TOGGLE'
+            });            
             this.$emit('increase-percentage');
         },
         getMessage(message) {
@@ -82,7 +91,11 @@ export default {
             this.isOpen = !this.isOpen;
         },
         deleteSubtask() { 
-            this.$store.dispatch("deleteSubtask", { subtaskId: this.subtask.id, taskId: this.parentTaskID });
+            this.$store.dispatch("handleTask", { 
+                subtaskId: this.subtask.id,
+                taskId: this.parentTaskID,
+                command: 'DELETE_SUBTASK'
+            });
             this.$store.dispatch("getTasksFromDB");
         }
     }
