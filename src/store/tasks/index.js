@@ -2,6 +2,7 @@ import Finder from '../../utils/finder'
 import DateTime from '../../utils/DateTime';
 import id from '../../utils/idgen';
 import db from '../../db/db';
+import TaskNode from '../../utils/TaskNode';
 
 export default { 
     state: {
@@ -114,42 +115,23 @@ export default {
                 var [currentDate] = DateTime.getDateTime();
                 var idPrefix = id.generate();
 
-                var newTask = {
+                var newTask = new TaskNode({
                     id: idPrefix,
                     name: payload.name,
                     completed: false,
                     dateCreated: currentDate,
-                    completionDate: '',
-                    subtasks: payload.subtasks  // should be an array of objects
-                }
-    
+                    completionDate: ''  // should be an array of objects
+                }, 
+                null, payload.subtasks);
+                
                 await db.addItem('Tasks', newTask);
-            },
-            async addSubtask(context, payload) {
-                await db.editItem('Tasks', payload.id, (task) => {
-                    task.subtasks.push(payload.subtask);
-                })
-            },
-            async toggleSubtask(context, { taskId, subtaskId }) {
-                await db.editItem('Tasks', taskId, (parentTask) => {
-                    var subtask = Finder.findItem(parentTask.subtasks, subtaskId);
-                    subtask.completed = !subtask.completed;
-                });
-            },
-            async renameTask(context, payload) {
-                await db.editItem('Tasks', payload.id, (task) => {
-                    task.name = payload.text;
-                });
-            },
-            async editSubtask(context, { taskId, subtaskId, text }) {
-                await db.editItem('Tasks', taskId, (parentTask) => {
-                    var subtask = Finder.findItem(parentTask.subtasks, subtaskId);
-                    subtask.task = text;
-                });
             },
             async handleTask(context, payload) {
                 await db.editItem('Tasks', payload.taskId, (task) => {
-                    const parentTask = task;
+                    // the task object must be re-linked to TaskNode since IndexedDB removes that link
+                    task = new TaskNode(task, task.parentTask, task.subtasks);
+                    task.handleTask(payload);
+                    /* const parentTask = task;
 
                     if(payload.subtaskId) {
                         task = Finder.findItem(task.subtasks, payload.subtaskId);
@@ -169,17 +151,11 @@ export default {
                             var index = parentTask.subtasks.findIndex(elem => elem.id === payload.subtaskId);
                             parentTask.subtasks.splice(index, 1);
                             break;      
-                    }
+                    } */
                 });
             },
             async deleteTask(context, payload) {
                 await db.deleteItem('Tasks', payload);
-            },
-            async deleteSubtask (context, { taskId, subtaskId }) {
-                await db.editItem('Tasks', taskId, (parentTask) => {
-                    const index = parentTask.subtasks.findIndex(elem => elem.id === subtaskId);
-                    parentTask.subtasks.splice(index, 1);
-                });
             },
             async getTasksFromDB(context) {
                 var tasks = await db.getItems('Tasks');

@@ -66,7 +66,7 @@ export default {
 			var req = objStore.get(itemID);
 			req.onsuccess = function() {
 				const data = req.result;
-
+				
 				editMethod(data); // mutate the db data with a specific method
 				const update = objStore.put(data); // update the data in the object store
 				update.onsuccess = function() {

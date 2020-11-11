@@ -12,6 +12,10 @@
                     <li><span class="ico">todo</span><p class="info-text">{{ project.taskIDs.length }} tasks </p></li>
                 </ul>
             </div>
+            <svg width="400" height="100">
+                <line x1="50" y1="5" x2="200" y2="5" stroke="gray" stroke-width="5"/>
+                <line x1="50" y1="5" x2="70" y2="5" stroke="lime" stroke-width="4"/>
+            </svg>
         </div>
     </div>
 </template>
@@ -68,7 +72,7 @@ export default {
 
     .info-text {
         display: inline-block;
-        margin-left: 1rem;
+        /* margin-left: 0.5rem; */
     }
 
     .info-icon {

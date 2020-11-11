@@ -1,5 +1,4 @@
-
-class TaskNode {
+export default class TaskNode {
     constructor(task, parentTask, subtasks) {
         this.id = task.id;
         this.name = task.name;
@@ -10,25 +9,45 @@ class TaskNode {
         this.subtasks = subtasks;
     }
 
+    get subtaskCount() {
+        return this.subtasks.length;
+    }
+
+    getSubtask(id) {
+        return this.subtasks.find(elem => elem.id === id);
+    }
+
     addSubtask(task) {
         this.subtasks.push(new TaskNode(task, this, null));
     }
 
-    handleTask(id, command, payload) {
+    deleteSubtask(subtaskId) {
+        const index = this.subtasks.findIndex(elem => elem.id === subtaskId)
+        this.subtasks.splice(index, 1);
+    }
+
+    display() {
+        console.log(this);
+    }
+
+    handleTask(payload) {
         var task = this;
-        if(id !== null) {
-            task = task.subtasks.find(elem => this.id === elem.id);
+        if(payload.subtaskId) {
+            task = this.getSubtask(payload.subtaskId);
         }
 
-        switch(command) {
+        switch(payload.command) {
+            case 'ADD_SUBTASK':
+                this.addSubtask(payload.subtask);
+                break;
             case 'TOGGLE':
                 task.completed = !task.completed;
                 break;
             case 'EDIT':
-                task.name = payload;
+                task.name = payload.name;
                 break;
-            case 'DELETE':
-                delete task;
+            case 'DELETE_SUBTASK':
+                this.deleteSubtask(payload.subtaskId);
                 break;
         }
     }

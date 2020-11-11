@@ -1,6 +1,6 @@
 <template>
 	<label class="checkbox-label" :class="{completed: item.completed}">
-		<span class="text">{{ item.task }}</span>
+		<span class="text">{{ item.name }}</span>
 		<input type="checkbox" :checked="item.completed" @click="toggleItem(item.id)"/>
 		<span class="checkmark"></span>
 	</label>
