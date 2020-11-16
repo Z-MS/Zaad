@@ -1,6 +1,6 @@
 <template>
     <div class="grid">
-        <div class="item" v-for="project in projects" :key="project.id">
+        <div class="item" v-for="project in projects" :key="project.id" @click="$router.push(`/project/${project.id}`)">
             <div class="project-head">
                 <span class="ico info-icon">radio-button2</span>
                 <h1>{{ project.name }}</h1>
@@ -35,8 +35,8 @@ export default {
         }
     },
     methods: {
-        tasks(taskIDs) {
-            return this.$store.getters.getTasks(taskIDs)
+        tasks() {
+            return this.$store.getters.getTasks;
         }
     }
 }

@@ -1,12 +1,12 @@
 export default class TaskNode {
-    constructor(task, parentTask, subtasks) {
+    constructor(task, parentTask, subtasks, index) {
         this.id = task.id;
         this.name = task.name;
         this.completed = task.completed;
         this.dates = task.dates;
-        this.completionDate = task.completionDate;
         this.parentTask = parentTask;
         this.subtasks = subtasks;
+        this.index = index;
     }
 
     get subtaskCount() {
@@ -24,10 +24,6 @@ export default class TaskNode {
     deleteSubtask(subtaskId) {
         const index = this.subtasks.findIndex(elem => elem.id === subtaskId)
         this.subtasks.splice(index, 1);
-    }
-
-    display() {
-        console.log(this);
     }
 
     handleTask(payload) {

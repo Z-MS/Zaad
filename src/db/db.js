@@ -3,52 +3,63 @@ var db;
 export default {
 	async getDb() {
 		return new Promise((resolve, reject) => {
-			var request = indexedDB.open("zTaskDB");
+			var request = indexedDB.open("zTaskDB", 5);
 
 			request.onerror = function(event) {
-				console.log("Why didn't you allow my DB to be created");
+				console.error("Why didn't you allow my DB to be created");
 				reject('Error' + event);
 			};
 
 			request.onsuccess = function(event) {
 				db = event.target.result;
 				resolve(db)
-				console.log("Hello" + db);
 			}
-			request.onupgradeneeded = event => {
-				console.log('onupgradeneeded');
+			request.onupgradeneeded = function(event) {
+				console.log('upgrading...');
 				var db = event.target.result;
-				db.createObjectStore("Notes", { autoIncrement: true, keyPath: 'id' });
-				db.createObjectStore("Projects", { autoIncrement: true, keyPath: 'id' });
-				db.createObjectStore("Tasks", { autoIncrement: true, keyPath: 'id' });
+
+				const transaction = event.target.transaction;
+				transaction.objectStore('Tasks').deleteIndex('project');
+
+				if(event.oldVersion < 1) {
+					db.createObjectStore("Notes", { autoIncrement: true, keyPath: 'id' });
+					db.createObjectStore("Projects", { autoIncrement: true, keyPath: 'id' });
+					db.createObjectStore("Tasks", { autoIncrement: true, keyPath: 'id' });
+				}
 			}
 		});
 	},
-	async getItems(store) {
+	async getItems(store, index, indexVal) {
 		var items = [];
 		var db = await this.getDb();
 
 		return new Promise(resolve => {
-			var transaction = db.transaction(store);
-			transaction.oncomplete = function() {
-				resolve(items);
+			var transaction = db.transaction(store, "readonly");
+			transaction.oncomplete = function() {				
+				resolve(items)
 			};
 
 			var objStore = transaction.objectStore(store);
-			objStore.getAll().onsuccess = function(event) {
-				items = event.target.result;
-			};
+			if(index) {
+				let storeIndex = objStore.index(index);
+				storeIndex.getAll(indexVal).onsuccess = function(event) {
+					items = event.target.result;
+				}
+			} else {
+				objStore.getAll().onsuccess = function(event) {
+					items = event.target.result;
+				};
+			}
 		});
 	},
 	async addItem(store, item) {
 		var db = await this.getDb();
 
 		return new Promise(resolve => {
-			var transaction = db.transaction(store, 'readwrite');
+			var transaction = db.transaction(store, "readwrite");
 			transaction.oncomplete = function() {
 				resolve();
 			};
-
 			var objStore = transaction.objectStore(store);
 			objStore.add(item);
 		});
@@ -57,7 +68,7 @@ export default {
 		var db = await this.getDb();
 
 		return new Promise(resolve => {
-			var transaction = db.transaction(store, 'readwrite');
+			var transaction = db.transaction(store, "readwrite");
 			transaction.oncomplete = function() {
 				resolve();
 			};
@@ -79,7 +90,7 @@ export default {
 		var db = await this.getDb();
 
 		return new Promise(resolve => {
-			var transaction = db.transaction(store, 'readwrite');
+			var transaction = db.transaction(store, "readwrite");
 			transaction.oncomplete = function() {
 				resolve();
 			}

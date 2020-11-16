@@ -103,28 +103,29 @@ export default {
             } */
 
         ]
-      },
-      getters: {
+    },
+    getters: {
         getTask: (state) => (id) => {
-            return Finder.findItem(state.tasks, id);            // return state.tasks.find(elem => elem.id === id);
+            return Finder.findItem(state.tasks, 'id', id);            // return state.tasks.find(elem => elem.id === id);
         },
-        getTasks: state =>  state.tasks //rewrite this function to accept args
-      },  
-      actions: {
-            async addTask (context, payload) {
-                var [currentDate] = DateTime.getDateTime();
-                var idPrefix = id.generate();
-
-                var newTask = new TaskNode({
-                    id: idPrefix,
-                    name: payload.name,
-                    completed: false,
-                    dateCreated: currentDate,
-                    completionDate: ''  // should be an array of objects
-                }, 
-                null, payload.subtasks);
-                
-                await db.addItem('Tasks', newTask);
+        getTasks(state)  {
+            return state.tasks;
+        }
+    },  
+    actions: {
+        async addTask (context, payload) {
+            var [currentDate] = DateTime.getDateTime();
+            var taskID = id.generate();
+            console.log(payload.index);
+            var newTask = new TaskNode({
+                id: taskID,
+                name: payload.name,
+                completed: false,
+                dateCreated: currentDate,
+                completionDate: ''  // should be an array of objects
+            }, 
+            null, payload.subtasks, payload.index);  
+            await db.addItem('Tasks', newTask); 
             },
             async handleTask(context, payload) {
                 await db.editItem('Tasks', payload.taskId, (task) => {
@@ -157,11 +158,11 @@ export default {
             async deleteTask(context, payload) {
                 await db.deleteItem('Tasks', payload);
             },
-            async getTasksFromDB(context) {
-                var tasks = await db.getItems('Tasks');
+            async getTasksFromDB(context, index, indexVal) {
+                var tasks = await db.getItems('Tasks', index, indexVal);
                 context.state.tasks = tasks;
             }
-      }
+    }
 }
 /* TASK: Create a utility for generating or at least incrementing IDs(if created manually)
 OR get a library to do it

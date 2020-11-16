@@ -1,6 +1,7 @@
 import Finder from '../../utils/finder'
 import DateTime from '../../utils/DateTime';
 import db from '../../db/db'
+import pNode from '../../utils/ProjectNode';
 
 export default {
     state: {
@@ -34,9 +35,12 @@ export default {
         ]
     },
     getters: {
-        getProjects: state => state.projects,
+        getProjects: (state) => {
+
+            return state.projects;
+        },
         getProject: state => id => {
-            return Finder.findItem(state.projects, id)
+            return Finder.findItem(state.projects, 'id', id);
             // return state.projects.find(elem => elem.id === id);
         }
     },
@@ -61,7 +65,7 @@ export default {
         },
         async editProject(context, payload) {
             // project name, description,notes
-            var project = Finder.findItem(context.state.projects, payload.id);
+            var project = Finder.findItem(context.state.projects, 'id', payload.id);
             switch(payload.field) {
                 case 'name': 
                     project.name = payload.content;
@@ -82,8 +86,8 @@ export default {
         },
         async getProjectsFromDB() {
             await db.getItems('Projects');
+            console.log(pNode);
         }
-
     }
 }
 /* 

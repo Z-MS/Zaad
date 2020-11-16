@@ -1,8 +1,9 @@
 export default {
-    findItem(context, searchKey) {
+    findItem(context, searchKey, value) {
         // var stringifiedKey = String(searchKey);
-        return context.find(elem => elem['id'] === searchKey)
+        const result = context.find(elem => elem[searchKey] === value);
+        return result;
     }
 }
 
-// search for an item by its ID in an array. To be used in Vuex
+// search for an item in an array by a specific property 'searchKey'. To be used in Vuex

@@ -55,13 +55,14 @@ export default {
     },
     created() {
         if(!this.$store.getters.getTasks.length) {
-			this.$store.dispatch('getTasksFromDB');
+            this.$store.dispatch('getTasksFromDB', 'index', 'regulars');
 		}
     },
     computed: {
         tasks() {
-            return this.$store.getters.getTasks
+            return this.$store.getters.getTasks;
         }
+        // "4TcokZGPCDzctaiH"
     },
     methods: {
         resetAll() {
@@ -94,7 +95,8 @@ export default {
         createTask() {
             this.$store.dispatch("addTask", {
                 name: this.taskName, 
-                subtasks: this.subtasks
+                subtasks: this.subtasks,
+                index: 'regular'
             });
             this.$store.dispatch("getTasksFromDB");
             this.toggleNew();

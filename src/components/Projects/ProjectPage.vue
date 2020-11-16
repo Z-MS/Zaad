@@ -11,22 +11,22 @@
                 <button type="submit" class="success">Save</button>
                 <button type="button" class="danger" @click="toggleEdit">Cancel</button>
             </form>
-            <task-list :taskIDs="project.taskIDs"/>
+            <!-- <task-list :taskIDs="project.taskIDs"/> -->
         </div>
     </div>
 </template>
 
 <script>
 
-import TaskList from './TaskList'
+// import TaskList from './TaskList'
 
 export default {
     data: () => ({
         isEditing: false
-    }),
+    })/* ,
     components: {
         TaskList
-    },
+    } */,
     props: {
         id: { type: String, required: true }
     },
