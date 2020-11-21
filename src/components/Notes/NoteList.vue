@@ -166,7 +166,7 @@ button {
 }
 
 .pen {
-	color: rgb(204, 204, 35);
+	color: var(--gold);
 	background-color: white;
 }
 </style>

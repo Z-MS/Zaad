@@ -147,6 +147,7 @@ export default {
         display: grid;
         justify-content: center;
         background-color: white;
+        box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.25);
     }
 
     .rounded {
