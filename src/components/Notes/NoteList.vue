@@ -61,7 +61,9 @@ export default {
 		},
 		createNote() {
 			if(this.noteText) {
-				this.$store.dispatch("addNote", { noteText: this.noteText });
+				this.$store.dispatch("addNote", { 
+					noteText: this.noteText 
+				});
 			}
  
 			this.$store.dispatch('getNotesFromDB');

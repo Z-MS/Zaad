@@ -10,27 +10,27 @@ export default {
                 id: "1", // constant
                 name: "My project", // editable
                 description: "Project manager", // editable
-                notes: "notes", // editable
+                noteIDs: [], // editable
                 completed: false, // toggleable
                 dates: {
                     startDate: "06-4-2020", // constant
                     expCompletionDate: "TBD" // editable if completionStatus is false - if true, template should display 'Completion date' instead of 'Expected comp...'
                 },
                 images: [], // editable
-                taskIDs: /* Array of task IDs */["1", "2"] // editable
+                taskIDs: /* Array of task IDs */[] // editable
             },
             {
                 id: "2",
                 name: "Proj2",
                 description: "Project manager for other stuff",
-                notes: "notes and stuff", // probably make this an array
+                noteIDs: [], // probably make this an array
                 completed: false,
                 dates: {
                     startDate: "06-4-2020",
                     expCompletionDate: "TBD"
                 },
                 images: [],
-                taskIDs: /* Array of task IDs */["3", "4"]
+                taskIDs: /* Array of task IDs */[]
             }
         ]
     },

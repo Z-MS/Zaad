@@ -4,8 +4,8 @@
       <ul>
         <li class="nav__item">
             <router-link to="/">
-                <span class="ico nav__icon">&#xe902;</span>
-                <span class="nav__text">Home</span>
+                <span class="ico nav__icon">history</span>
+                <span class="nav__text">Recents</span>
             </router-link>
         </li> 
         <li class="nav__item">

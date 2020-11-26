@@ -18,7 +18,7 @@ export default class TaskNode {
     }
 
     addSubtask(task) {
-        this.subtasks.push(new TaskNode(task, this, null));
+        this.subtasks.push(new TaskNode(task, this, null, null));
     }
 
     deleteSubtask(subtaskId) {

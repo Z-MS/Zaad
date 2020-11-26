@@ -1,21 +1,23 @@
 <template>
     <div class="background">
-        <div class="sticky">
-            <div class="row">
-                <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
-                <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted" />
+        <slot>
+            <div class="sticky">
+                <div class="row">
+                    <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
+                    <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted" />
+                </div>
+                <form @submit.prevent="addSubtask">
+                    <input v-model="subtaskText" type="text" placeholder="Enter a new item"/>
+                </form>    
             </div>
-            <form @submit.prevent="addSubtask">
-                <input v-model="subtaskText" type="text" placeholder="Enter a new item"/>
-            </form>    
-        </div>
-        <div>
-            <ul v-for="subtask in task.subtasks" :key="subtask.id">
-                <li>   
-                    <task-item :subtask="subtask" :parentTaskID="task.id" @increase-percentage="updateState"/>
-                </li>
-            </ul>
-        </div>
+            <div>
+                <ul v-for="subtask in task.subtasks" :key="subtask.id">
+                    <li>   
+                        <task-item :subtask="subtask" :parentTaskID="task.id" @increase-percentage="updateState"/>
+                    </li>
+                </ul>
+            </div>
+        </slot>
     </div>
 </template>
 

@@ -12,27 +12,31 @@
                 <button type="button" class="danger" @click="toggleEdit">Cancel</button>
             </form>
             <div class="project-content">
-                <p class="category">TASKS</p>
-                <task-list/>
-                <p class="category">NOTES</p>
-                <note-list/>
+                <p class="category" @click="createTask">TASKS</p>
+                    <div id="task" v-for="task in tasks" :key="task.id">
+                        <task-page :id="task.id">Beans</task-page>
+                    </div>
+                <p class="category" @click="createNote">NOTES</p> 
+                    <div>{{ notes }}</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-
-import TaskList from './TaskList';
-import NoteList from '../Notes/NoteList';
+import TaskPage from './TaskPage';
+import id from '../../utils/idgen';
 
 export default {
     data: () => ({
         isEditing: false
     }),
     components: {
-        TaskList,
-        NoteList
+        TaskPage
+    },
+    mounted() {
+        
+        this.$store.dispatch('filterTasks', this.project.taskIDs, 'project');
     },
     props: {
         id: { type: String, required: true }
@@ -40,6 +44,13 @@ export default {
     computed: {
         project() {
             return this.$store.getters.getProject(this.id)
+        },
+        tasks() {
+            return this.$store.getters.getFilteredTasks;
+        },
+        notes() {
+            this.$store.dispatch('filterNotes', this.project.noteIDs);
+            return this.$store.getters.getFilteredNotes;
         }
     },
     methods: {
@@ -49,6 +60,24 @@ export default {
         saveChanges() {
             this.$store.dispatch("editProject", { id: this.id, content: this.project.name, field: "name"});
             this.toggleEdit();
+        },
+        createTask() {
+            let taskID = id.generate();
+            this.project.taskIDs.push(taskID);
+
+            this.$store.dispatch("addTask", {
+                id: taskID,
+                name: "New task",
+                subtasks: [{ name: "subtask", id: id.generate(), completed: false}],
+                index: 'project'
+            });
+                      
+        },
+        createNote() {
+            this.$store.dispatch("addNote", {
+                noteText: "New note that says things about things",
+                index: 'project'
+            });
         }
     }
     
@@ -107,5 +136,10 @@ export default {
     input {
         margin: auto;
         display: block;
+    }
+
+    #task {
+        margin: 0 auto;
+        width: 35%;
     }
 </style>

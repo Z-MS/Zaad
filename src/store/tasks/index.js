@@ -102,21 +102,21 @@ export default {
                 ]
             } */
 
-        ]
+        ],
+        filteredTasks: []
     },
     getters: {
         getTask: (state) => (id) => {
             return Finder.findItem(state.tasks, 'id', id);            // return state.tasks.find(elem => elem.id === id);
         },
-        getTasks(state)  {
-            return state.tasks;
-        }
+        getTasks: (state) => state.tasks,
+        getFilteredTasks: (state) => state.filteredTasks
     },  
     actions: {
         async addTask (context, payload) {
             var [currentDate] = DateTime.getDateTime();
-            var taskID = id.generate();
-            console.log(payload.index);
+            var taskID = payload.id ? payload.id : id.generate();
+            
             var newTask = new TaskNode({
                 id: taskID,
                 name: payload.name,
@@ -126,12 +126,12 @@ export default {
             }, 
             null, payload.subtasks, payload.index);  
             await db.addItem('Tasks', newTask); 
-            },
-            async handleTask(context, payload) {
-                await db.editItem('Tasks', payload.taskId, (task) => {
-                    // the task object must be re-linked to TaskNode since IndexedDB removes that link
-                    task = new TaskNode(task, task.parentTask, task.subtasks);
-                    task.handleTask(payload);
+        },
+        async handleTask(context, payload) {
+            await db.editItem('Tasks', payload.taskId, (task) => {
+                // the task object must be re-linked to TaskNode since IndexedDB removes that link
+                task = new TaskNode(task, task.parentTask, task.subtasks);
+                task.handleTask(payload);
                     /* const parentTask = task;
 
                     if(payload.subtaskId) {
@@ -153,15 +153,27 @@ export default {
                             parentTask.subtasks.splice(index, 1);
                             break;      
                     } */
-                });
-            },
-            async deleteTask(context, payload) {
-                await db.deleteItem('Tasks', payload);
-            },
-            async getTasksFromDB(context, index, indexVal) {
-                var tasks = await db.getItems('Tasks', index, indexVal);
-                context.state.tasks = tasks;
+            });
+        },
+        async deleteTask(context, payload) {
+            await db.deleteItem('Tasks', payload);
+        },
+        async getTasksFromDB(context, index, indexVal) {
+            var tasks = await db.getItems('Tasks', index, indexVal);
+            context.state.tasks = tasks;
+        },
+        async filterTasks(context, taskIDs, indexVal) {
+            // get the required tasks from the general tasks array
+            context.state.filteredTasks = [];
+            await context.dispatch('getTasksFromDB', 'index', indexVal);
+            for(const id of taskIDs) {
+                for(let i = 0; i < context.state.tasks.length; i++) {
+                    let elem = context.state.tasks[i];
+                    if(elem.id === id) 
+                        context.state.filteredTasks.push(elem);
+                }
             }
+        }
     }
 }
 /* TASK: Create a utility for generating or at least incrementing IDs(if created manually)

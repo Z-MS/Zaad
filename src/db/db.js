@@ -19,7 +19,7 @@ export default {
 				var db = event.target.result;
 
 				const transaction = event.target.transaction;
-				transaction.objectStore('Tasks').deleteIndex('project');
+				transaction.objectStore('Notes').createIndex('index');
 
 				if(event.oldVersion < 1) {
 					db.createObjectStore("Notes", { autoIncrement: true, keyPath: 'id' });

@@ -19,7 +19,15 @@ export default {
                 excerpt: "Beans is delicious, rice...",
                 date: "12-3-2020"
             } */
-        ] 
+        ],
+        filteredNotes: [] 
+    },
+    getters: {
+        getNotes: (state) => state.notes,
+        getNote: (state) => (id) => {
+            return state.notes.find(elem => elem.id === id)
+        },
+        getFilteredNotes: (state) => state.filteredNotes
     },
     actions: {
         async addNote(context, payload) {
@@ -32,7 +40,7 @@ export default {
                 noteText: payload.noteText,
                 excerpt: snippet.snip(payload.noteText),
                 date: currentDate,
-                tag: payload.tag
+                index: payload.index
             }
 
             await db.addItem('Notes', newNote);
@@ -48,17 +56,19 @@ export default {
                 data.excerpt = payload.excerpt;
             });
         },
-        async getNotesFromDB(context) {
-            var notes = await db.getItems('Notes');
+        async getNotesFromDB(context, index, indexVal) {
+            var notes = await db.getItems('Notes', index, indexVal);
             context.state.notes = notes;
-        }
-    },
-    getters: {
-        getNotes(state) {
-            return state.notes;
         },
-        getNote: (state) => (id) => {
-            return state.notes.find(elem => elem.id === id)
+        async filterNotes(context, noteIDs) {
+            // get the required notes from the general notes array
+            for(const id of noteIDs) {
+                for(let i = 0; i < context.state.notes.length; i++) {
+                    let elem = context.state.notes[i];
+                    if(elem.id === id)
+                        context.state.filteredNotes.push(elem);
+                }
+            }
         }
     }
 }

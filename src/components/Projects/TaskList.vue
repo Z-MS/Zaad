@@ -55,7 +55,7 @@ export default {
     },
     created() {
         if(!this.$store.getters.getTasks.length) {
-            this.$store.dispatch('getTasksFromDB', 'index', 'regulars');
+            this.$store.dispatch('getTasksFromDB', 'index', 'regular');
 		}
     },
     computed: {
@@ -97,7 +97,7 @@ export default {
                 name: this.taskName, 
                 subtasks: this.subtasks,
                 index: 'regular'
-            });
+            }); 
             this.$store.dispatch("getTasksFromDB");
             this.toggleNew();
             this.resetAll();
