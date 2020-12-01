@@ -1,10 +1,11 @@
 <template>
     <div class="background">
-        <slot>
+        <div v-show="view === 'grid'">
             <div class="sticky">
                 <div class="row">
                     <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
-                    <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted" />
+     
+                   <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted" />
                 </div>
                 <form @submit.prevent="addSubtask">
                     <input v-model="subtaskText" type="text" placeholder="Enter a new item"/>
@@ -17,7 +18,23 @@
                     </li>
                 </ul>
             </div>
-        </slot>
+        </div>
+        <div class="list" v-show="view === 'list'">
+            <div class="sticky">
+                <div class="row">
+                    <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
+                    <p>{{ getPercentCompleted }}</p>
+                </div>
+            </div>
+            <div>
+                <ul v-for="subtask in task.subtasks" :key="subtask.id">
+                    <li>   
+                        <task-item :subtask="subtask" :parentTaskID="task.id" @increase-percentage="updateState"/>
+                    </li>
+                </ul>
+                <span>Add a new item</span><span class="ico" @click="$emit('add')">add</span>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -31,16 +48,18 @@ export default {
     data: () => ({
         circumference: 2 * Math.PI * 40,
         subtaskText: ""
-    }),
+    })/* ,
     mounted() {
         this.updateState();
-    },
+    } */,
     components: {
         TaskItem,
         PercentCircle
     },
     props: {
-        id: { type: String, required: true }
+        id: { type: String, required: true },
+        view: { type: String, required: true },
+        indexVal: { type: String, required: false, default: 'regular' }
     },
     computed: {
         task() {
@@ -80,7 +99,7 @@ export default {
         },
         async updateState() {
         // for this function to run when mounted, get the task from DB
-            await this.$store.dispatch("getTasksFromDB");
+            await this.$store.dispatch("getTasksFromDB", { index: 'index', indexVal: 'regular' });
         },
         deleteTask() {
             this.$store.dispatch("deleteTask", this.id);
@@ -105,6 +124,10 @@ export default {
     margin-bottom: 1rem;
     top: 0px;
     background-color: white;
+}
+
+.list .sticky  {
+    background-color: grey;
 }
 
 .row {
@@ -158,6 +181,7 @@ li {
     padding: 1%;
     font-size: 1.5rem;
 }
+
 
 /* svg {
     width: 30%;

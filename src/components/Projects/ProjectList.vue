@@ -1,21 +1,24 @@
 <template>
-    <div class="grid">
-        <div class="item" v-for="project in projects" :key="project.id" @click="$router.push(`/project/${project.id}`)">
-            <div class="project-head">
-                <span class="ico info-icon">radio-button2</span>
-                <h1>{{ project.name }}</h1>
-                <p id="description">{{ project.description }}</p>
+    <div>
+        <button class="success">Create new project</button>
+        <div class="grid"> 
+            <div class="item" v-for="project in projects" :key="project.id" @click="$router.    push(`/project/${project.id}`)">
+                <div class="project-head">
+                    <span class="ico info-icon">radio-button2</span>
+                    <h1>{{ project.name }}</h1>
+                    <p id="description">{{ project.description }}</p>
+                </div>
+                <div>
+                    <ul>
+                        <li><span class="ico">flag</span><p class="info-text">{{ project.dates.startDate }}</p></li>
+                        <li><span class="ico">todo</span><p class="info-text">{{ project.taskIDs.length }} tasks </p></li>
+                    </ul>
+                </div>
+                <svg width="400" height="100">
+                    <line x1="50" y1="5" x2="200" y2="5" stroke="gray" stroke-width="5"/>
+                    <line x1="50" y1="5" x2="70" y2="5" stroke="lime" stroke-width="4"/>
+                </svg>
             </div>
-            <div>
-                <ul>
-                    <li><span class="ico">flag</span><p class="info-text">{{ project.dates.startDate }}</p>
-                    <li><span class="ico">todo</span><p class="info-text">{{ project.taskIDs.length }} tasks </p></li>
-                </ul>
-            </div>
-            <svg width="400" height="100">
-                <line x1="50" y1="5" x2="200" y2="5" stroke="gray" stroke-width="5"/>
-                <line x1="50" y1="5" x2="70" y2="5" stroke="lime" stroke-width="4"/>
-            </svg>
         </div>
     </div>
 </template>

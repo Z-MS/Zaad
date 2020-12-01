@@ -1,11 +1,16 @@
 <template>
-    <svg>
-        <circle stroke-dasharray="0" :r="radius" :cx="coords.cx" :cy="coords.cy" :stroke="strokes.inner" fill="none" stroke-width="5" stroke-linecap="round">
-        </circle>
-        <circle :id="id" class="percent-ring" :stroke-dashoffset="circumference" :r="radius" :cx="coords.cx" :cy="coords.cy" :stroke="strokes.outer" fill="none" stroke-width="3" stroke-linecap="round">
-        </circle>
-        <text :x="shiftX" y="60">{{ progress }}%</text>
-    </svg>
+    <!-- <div> -->
+        <svg>
+            <circle stroke-dasharray="0" :r="radius" :cx="coords.cx" :cy="coords.cy" :stroke="strokes.inner" fill="none" stroke-width="5" stroke-linecap="round">
+            </circle>
+            <circle :id="id" class="percent-ring" :stroke-dashoffset="circumference" :r="radius" :cx="coords.cx" :cy="coords.cy" :stroke="strokes.outer" fill="none" stroke-width="3" stroke-linecap="round">
+            </circle>
+            <text :x="shiftX" y="60">{{ progress }}%</text>
+        </svg>
+        <!-- <svg v-show="!circle">
+            
+        </svg> -->
+    <!-- </div> -->
 </template>
 
 <script>
@@ -15,7 +20,7 @@ export default {
     },
     props: {
         id: { type: String, required: true },
-        radius: { type: Number, required: true },
+        radius: { type: Number, required: false },
         progress: { type: Number, required: true },
         dashoffset: { type: Number, default: 40, required: false },
         strokes: { type: Object, default: () => { return { inner: 'gray', outer: 'lime' } }, required: false },

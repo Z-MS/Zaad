@@ -22,7 +22,8 @@ export default {
     }),
     props: {
         text: { type: String },
-        id: { type: String, required: true }
+        id: { type: String, required: true },
+        indexVal: { type: String, required: true }
     },
     components: {
         ConfirmDialog
@@ -45,13 +46,13 @@ export default {
         saveChanges() {
             if(this.edited) {
                 this.$store.dispatch("editNote", { text: this.editedText, id: Number(this.id) })
-                this.$store.dispatch("getNotesFromDB");
+                this.$store.dispatch("getNotesFromDB", { index: 'index', indexVal: this.indexVal });
             }
             this.close();
         },
         deleteNote(id) {
             this.$store.dispatch("deleteNote", id);
-            this.$store.dispatch('getNotesFromDB');
+            this.$store.dispatch("getNotesFromDB", { index: 'index', indexVal: this.indexVal } );
         },
         toggleDialog() {
             this.isOpen = !this.isOpen;

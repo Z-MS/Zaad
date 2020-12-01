@@ -8,13 +8,11 @@
                 <todo-item :task="todo.task" :completed="todo.completed" :id="todo.id"/>
             </li>
         </ul>
-        <!-- <p> {{ dato }} </p> -->
     </div>
 </template>
 
 <script>
 import TodoItem from './TodoItem';
-
 
 export default {
     data: () => ({

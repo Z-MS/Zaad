@@ -38,7 +38,7 @@ export default {
 			transaction.oncomplete = function() {				
 				resolve(items)
 			};
-
+			
 			var objStore = transaction.objectStore(store);
 			if(index) {
 				let storeIndex = objStore.index(index);

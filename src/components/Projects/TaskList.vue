@@ -5,7 +5,7 @@
         <div class="taskgrid" v-if="!isNew">
             <!-- <button class="success ico">plus</button> -->
             <div class="item rounded" v-for="task in tasks" :key="task.id">
-                <task-page :id="task.id"/>
+                <task-page :id="task.id" :view="'grid'"/>
             </div>
         </div>
         <!-- Opens a new form for creating new tasks -->
@@ -53,16 +53,15 @@ export default {
         TaskPage,
         Checkbox
     },
-    created() {
+    mounted() {
         if(!this.$store.getters.getTasks.length) {
-            this.$store.dispatch('getTasksFromDB', 'index', 'regular');
+            this.$store.dispatch("getTasksFromDB", { index: 'index', indexVal: 'regular' });
 		}
     },
     computed: {
         tasks() {
             return this.$store.getters.getTasks;
         }
-        // "4TcokZGPCDzctaiH"
     },
     methods: {
         resetAll() {
@@ -98,7 +97,7 @@ export default {
                 subtasks: this.subtasks,
                 index: 'regular'
             }); 
-            this.$store.dispatch("getTasksFromDB");
+            this.$store.dispatch("getTasksFromDB", 'index', 'regular');
             this.toggleNew();
             this.resetAll();
         },
@@ -116,9 +115,9 @@ export default {
             var index = this.subtasks.findIndex(elem => elem.id === id);
             this.subtasks.splice(index, 1);
         },
-        triggerAddButton() {
-            const input = document.getElementById('new-subtask');
-            input.addEventListener("keyup", (event) => {
+        triggerAddButton(event) {
+            // const input = document.getElementById('new-subtask');
+            // input.addEventListener("keyup", (event) => {
                 // 13 is the code for the "Enter" key on the keyboard
                 if(event.keyCode === 13) {
                     // Cancel the default action, if needed
@@ -128,7 +127,7 @@ export default {
                         this.addSubtask();
                     }
                 }
-            });
+            // });
         }
     }
 }

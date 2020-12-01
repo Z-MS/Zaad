@@ -158,22 +158,43 @@ export default {
         async deleteTask(context, payload) {
             await db.deleteItem('Tasks', payload);
         },
-        async getTasksFromDB(context, index, indexVal) {
-            var tasks = await db.getItems('Tasks', index, indexVal);
-            context.state.tasks = tasks;
+        async getTasksFromDB(context, payload) {
+            const tasks = await db.getItems('Tasks', payload.index, payload.indexVal);
+            context.state.tasks = tasks; 
         },
-        async filterTasks(context, taskIDs, indexVal) {
-            // get the required tasks from the general tasks array
+        async filterTasks(context, payload) {
             context.state.filteredTasks = [];
-            await context.dispatch('getTasksFromDB', 'index', indexVal);
-            for(const id of taskIDs) {
-                for(let i = 0; i < context.state.tasks.length; i++) {
-                    let elem = context.state.tasks[i];
+            var fetchedTasks = await db.getItems('Tasks', 'index', payload.indexVal);
+
+            for(const id of payload.taskIDs) {
+                for(let i = 0; i < fetchedTasks.length; i++) {
+                    let elem = fetchedTasks[i];
                     if(elem.id === id) 
                         context.state.filteredTasks.push(elem);
                 }
             }
-        }
+        }/* ,
+        async getTasksFromDB(context, payload) {
+            if(!payload) {
+                // replace with context.state['storeprop']
+                context.state.tasks = await db.getItems('Tasks', 'index', 'regular');
+            } else {
+                // replace with payload.itemIDs
+                if(payload.taskIDs) {
+                    // decide whether or not you'll keep filteredItems
+                    context.state.filteredTasks = [];
+                    var fetchedTasks = await db.getItems('Tasks', 'index', payload.indexVal);
+
+                    for(const id of payload.taskIDs) {
+                        for(let i = 0; i < fetchedTasks.length; i++) {
+                            let elem = fetchedTasks[i];
+                            if(elem.id === id) 
+                                context.state.filteredTasks.push(elem);
+                        }
+                    }
+                }
+            }
+        } */
     }
 }
 /* TASK: Create a utility for generating or at least incrementing IDs(if created manually)

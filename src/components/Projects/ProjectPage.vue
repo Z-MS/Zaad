@@ -1,7 +1,7 @@
 <template>
     <div id="main">
         <div>
-            <div class="project-head" v-if="!isEditing" @click="toggleEdit">
+            <div class="project-head" v-if="!isEditing" @click="toggleItem(isEditing)">
                 <h1>{{ project.name }}</h1>
                 <p>{{ project.description }}</p>
             </div>
@@ -12,12 +12,36 @@
                 <button type="button" class="danger" @click="toggleEdit">Cancel</button>
             </form>
             <div class="project-content">
-                <p class="category" @click="createTask">TASKS</p>
+                <div class="tasks">
+                    <p class="category">TASKS</p>
+                    <button class="success" @click="show('new-task')">Create new task</button>
+                        <dialog id="new-task">
+                            <p>New task</p>
+                            <form @submit.prevent="createTask(newTask.taskName, newTask.subtasks, newTask.index)">
+                                <input type="text" placeholder="Task name" v-model="newTask.name">
+                                <ul>
+                                    <li v-for="subtask in newTask.subtasks" :key="subtask.id"><checkbox :item="subtask"/></li>
+                                </ul>
+                                <span class="ico">add</span>
+                                <input type="text" placeholder="Add new item" @keyup="addSubtask" v-model="newTask.subtaskText">
+                            </form>
+                            <button class="danger" @click="close('new-task')">Close</button>
+                        </dialog>
                     <div id="task" v-for="task in tasks" :key="task.id">
-                        <task-page :id="task.id">Beans</task-page>
+                        <task-page :id="task.id" :view="'list'" @add="createSubtask(task.id, 'sweet')"/>
                     </div>
-                <p class="category" @click="createNote">NOTES</p> 
-                    <div>{{ notes }}</div>
+                </div>
+                <div class="notes">
+                    <p class="category">NOTES</p> 
+                    <button class="success" @click="show('new-note')">Create new note</button>
+                    <dialog id="new-note">
+                        <p>New note</p>
+                        <button class="danger" @click="close('new-note')">Close</button>
+                    </dialog>
+                    <div>
+                        <notes-list :noteIDs="project.noteIDs"/>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -25,32 +49,33 @@
 
 <script>
 import TaskPage from './TaskPage';
+import NotesList from '../Notes/NoteList';
 import id from '../../utils/idgen';
+import TaskActions from './TaskActions';
+import Checkbox from '../Checkbox';
 
 export default {
     data: () => ({
-        isEditing: false
+        isEditing: false,
+        newTask: { subtasks: [] } /* create properties taskName, subtasks and index so I can easily use the createTask
+        function from the mixin */
     }),
     components: {
-        TaskPage
-    },
-    mounted() {
-        
-        this.$store.dispatch('filterTasks', this.project.taskIDs, 'project');
+        TaskPage, Checkbox, NotesList
     },
     props: {
         id: { type: String, required: true }
     },
+    mounted() {
+        this.$store.dispatch('filterTasks', { taskIDs: this.project.taskIDs, indexVal: 'project' });
+    },
+    mixins: [TaskActions],
     computed: {
         project() {
             return this.$store.getters.getProject(this.id)
         },
         tasks() {
             return this.$store.getters.getFilteredTasks;
-        },
-        notes() {
-            this.$store.dispatch('filterNotes', this.project.noteIDs);
-            return this.$store.getters.getFilteredNotes;
         }
     },
     methods: {
@@ -61,24 +86,33 @@ export default {
             this.$store.dispatch("editProject", { id: this.id, content: this.project.name, field: "name"});
             this.toggleEdit();
         },
-        createTask() {
-            let taskID = id.generate();
-            this.project.taskIDs.push(taskID);
-
-            this.$store.dispatch("addTask", {
-                id: taskID,
-                name: "New task",
-                subtasks: [{ name: "subtask", id: id.generate(), completed: false}],
-                index: 'project'
-            });
-                      
-        },
         createNote() {
             this.$store.dispatch("addNote", {
                 noteText: "New note that says things about things",
                 index: 'project'
             });
-        }
+        },
+        addSubtask(event) { // This is different from 'createSubtask' in the mixin as it does not push the subtask to the DB
+            if(event.keyCode === 13) {
+                var subtask = { 
+                    name: this.newTask.subtaskText,
+                    id: id.generate(),
+                    completed: false
+                };
+
+            this.newTask.subtasks.push(subtask);
+            this.newTask.subtaskText = "";
+            }
+            return;
+        },
+        show(id) {
+			var diag = document.getElementById(id);
+			diag.showModal();
+		}, 
+		close(id) {
+			var diag = document.getElementById(id);
+			diag.close();
+		}
     }
     
 }
@@ -139,7 +173,11 @@ export default {
     }
 
     #task {
-        margin: 0 auto;
-        width: 35%;
+        margin-left: 20%;
+        width: 70%;
+    }
+
+    .background {
+        border-radius: 0;
     }
 </style>

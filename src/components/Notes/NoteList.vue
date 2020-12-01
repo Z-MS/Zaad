@@ -9,7 +9,7 @@
 						</div>
 						<dialog :id="String(note.id)">
 							<div class="header-bar">
-								<edit-note :text="note.noteText" :id="String(note.id)" @close-edit="close(note.id)"/>
+								<edit-note :text="note.noteText" :id="String(note.id)" :indexVal="indexVal" @close-edit="close(note.id)"/>
 							</div>
 						</dialog> 
 						<p class="note-text" @click="show(note.id)">
@@ -40,18 +40,34 @@ export default {
 		noteText: "",
 		isNew: false
 	}),
+	props: {
+		noteIDs: { type: Array, required: false },
+		indexVal: { type: String, required: false, default: 'regular' } // noteID and indexVal
+	},
 	components: {
 		ResizableText, EditNote
 	},
 	created() {
 		if(!this.$store.getters.getNotes.length) {
-			this.$store.dispatch('getNotesFromDB');
+			if(this.noteIDs) {
+				console.log("Check me!");
+				this.$store.dispatch('filterNotes', { noteIDs: this.noteIDs, indexVal: 'project' });
+			} else {
+				this.$store.dispatch('getNotesFromDB', { index: 'index', indexVal: 'regular' });
+			}
 		}
 	},
 	computed: {
 		notes() {
 			// returns an array of objects
-			return this.$store.getters.getNotes
+			if(this.noteIDs) {
+				console.log("FIltered run!");
+				return this.$store.getters.getFilteredNotes;
+			}
+			else {
+				console.log("I ran");
+				return this.$store.getters.getNotes;
+			}
 		}
 	},
 	methods: {
@@ -60,13 +76,15 @@ export default {
 			this.isNew = !this.isNew;
 		},
 		createNote() {
+			var notesIndex = this.noteIDs ? 'project' : 'regular';
 			if(this.noteText) {
 				this.$store.dispatch("addNote", { 
-					noteText: this.noteText 
+					noteText: this.noteText,
+					index: notesIndex
 				});
 			}
  
-			this.$store.dispatch('getNotesFromDB');
+			this.$store.dispatch('getNotesFromDB', { index: 'index', indexVal: notesIndex });
 			this.toggleNew();
 		},
 		cancel() {

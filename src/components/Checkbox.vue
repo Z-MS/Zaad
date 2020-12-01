@@ -1,6 +1,6 @@
 <template>
-	<label class="checkbox-label" :class="{completed: item.completed}">
-		<span class="text">{{ item.name }}</span>
+	<label class="checkbox-label" >
+		<span class="text" :class="{completed: item.completed}">{{ item.name }}</span>
 		<input type="checkbox" :checked="item.completed" @click="toggleItem(item.id)"/>
 		<span class="checkmark"></span>
 	</label>
@@ -51,9 +51,10 @@ export default {
     content: "\ea53";
     width: 1.4rem;
     height: 1.3rem;
-    /* vertical-align: text-top; */
+    /*vertical-align: text-top; */
     border: 0.1rem solid transparent;
     border-radius: 10%;
+    margin-top: 0.2rem;
 
 }
 
