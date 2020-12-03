@@ -30,10 +30,6 @@ export default {
         getFilteredNotes: (state) => state.filteredNotes
     },
     actions: {
-        async getNotesFromDB(context, payload) {
-            var notes = await db.getItems('Notes', payload.index, payload.indexVal);
-            context.state.notes = notes;
-        },
         async addNote(context, payload) {
             var [currentDate] = DateTime.getDateTime();
             // add a snippet of the note to randomly generated characters
@@ -60,18 +56,11 @@ export default {
                 data.excerpt = payload.excerpt;
             });
         },
-        async filterNotes(context, payload) {
-            
-            context.state.filteredNotes = [];
-            var fetchedNotes = await db.getItems('Notes', 'index', payload.indexVal);
-
-            for(const id of payload.noteIDs) {
-                for(let i = 0; i < fetchedNotes.length; i++) {
-                    let elem = fetchedNotes[i];
-                    if(elem.id === id)
-                        context.state.filteredNotes.push(elem);
-                }
-            }
+        setNotes(context, payload) {
+            context.state.notes = payload;
+        },
+        setFilteredNotes(context, payload) {
+            context.state.filteredNotes = payload;
         }
     }
 }

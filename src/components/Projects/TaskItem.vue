@@ -62,23 +62,24 @@ export default {
         },
         saveChanges() {
             if(this.edited) {
-                this.$store.dispatch("handleTask", {
+                this.$store.dispatch('handleTask', {
                     name: this.editedText, 
                     subtaskId: this.subtask.id, 
                     taskId: this.parentTaskID, 
                     command: 'EDIT' 
                 });
-                this.$store.dispatch("getTasksFromDB");
+                
+                this.$emit('update');
             }
             this.toggleEdit();
         },
         toggleComplete() {
-            this.$store.dispatch("handleTask", {
+            this.$store.dispatch('handleTask', {
                 subtaskId: this.subtask.id,
                 taskId: this.parentTaskID, 
                 command: 'TOGGLE'
-            });            
-            this.$emit('increase-percentage');
+            });       // update on emit     
+            this.$emit('update');
         },
         getMessage(message) {
             this.isOpen = !this.isOpen;
@@ -91,12 +92,12 @@ export default {
             this.isOpen = !this.isOpen;
         },
         deleteSubtask() { 
-            this.$store.dispatch("handleTask", { 
+            this.$store.dispatch('handleTask', { 
                 subtaskId: this.subtask.id,
                 taskId: this.parentTaskID,
                 command: 'DELETE_SUBTASK'
             });
-            this.$store.dispatch("getTasksFromDB");
+            this.$emit('update');
         }
     }
 }

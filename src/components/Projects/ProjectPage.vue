@@ -39,7 +39,7 @@
                         <button class="danger" @click="close('new-note')">Close</button>
                     </dialog>
                     <div>
-                        <notes-list :noteIDs="project.noteIDs"/>
+                        <notes-list :noteIDs="project.noteIDs" :indexVal="project"/>
                     </div>
                 </div>
             </div>
@@ -67,7 +67,9 @@ export default {
         id: { type: String, required: true }
     },
     mounted() {
-        this.$store.dispatch('filterTasks', { taskIDs: this.project.taskIDs, indexVal: 'project' });
+        if(!this.$store.getters.getFilteredTasks.length) {
+            this.$store.dispatch('getItemsFromDB', { store: 'Tasks', itemIDs: this.project.taskIDs, indexVal: 'project' });
+        } 
     },
     mixins: [TaskActions],
     computed: {
@@ -79,6 +81,7 @@ export default {
         }
     },
     methods: {
+        // async updateState() {},
         toggleEdit() {
             this.isEditing = !this.isEditing
         },

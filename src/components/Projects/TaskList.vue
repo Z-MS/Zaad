@@ -55,7 +55,7 @@ export default {
     },
     mounted() {
         if(!this.$store.getters.getTasks.length) {
-            this.$store.dispatch("getTasksFromDB", { index: 'index', indexVal: 'regular' });
+            this.$store.dispatch('getItemsFromDB', { store: 'Tasks' });
 		}
     },
     computed: {
@@ -97,7 +97,7 @@ export default {
                 subtasks: this.subtasks,
                 index: 'regular'
             }); 
-            this.$store.dispatch("getTasksFromDB", 'index', 'regular');
+            this.$store.dispatch('getItemsFromDB', { store: 'Tasks' });
             this.toggleNew();
             this.resetAll();
         },

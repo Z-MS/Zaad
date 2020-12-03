@@ -14,7 +14,7 @@
             <div>
                 <ul v-for="subtask in task.subtasks" :key="subtask.id">
                     <li>   
-                        <task-item :subtask="subtask" :parentTaskID="task.id" @increase-percentage="updateState"/>
+                        <task-item :subtask="subtask" :parentTaskID="task.id" @update="updateState"/>
                     </li>
                 </ul>
             </div>
@@ -59,7 +59,8 @@ export default {
     props: {
         id: { type: String, required: true },
         view: { type: String, required: true },
-        indexVal: { type: String, required: false, default: 'regular' }
+        indexVal: { type: String, required: false },
+        taskIDs: { type: Array, required: false } // Task IDs are for tasks in projects
     },
     computed: {
         task() {
@@ -86,24 +87,27 @@ export default {
         }
     },
     methods: {
+        async updateState() {
+            if(this.taskIDs) {
+                await this.$store.dispatch('getItemsFromDB', { store: 'Tasks', indexVal: this.indexVal, itemIDs: this.taskIDs });
+            }  else {
+                await this.$store.dispatch('getItemsFromDB', { store: 'Tasks' });
+            }  
+        },
         addSubtask() {
             const idPrefix = id.generate();
-            this.$store.dispatch("handleTask", {
+            this.$store.dispatch('handleTask', {
                 taskId: this.id, 
                 subtask:  { id: idPrefix, name: this.subtaskText },
                 command: 'ADD_SUBTASK' 
             });
-            this.$store.dispatch("getTasksFromDB");
+            this.updateState();
 
             this.subtaskText = "";
         },
-        async updateState() {
-        // for this function to run when mounted, get the task from DB
-            await this.$store.dispatch("getTasksFromDB", { index: 'index', indexVal: 'regular' });
-        },
         deleteTask() {
-            this.$store.dispatch("deleteTask", this.id);
-            this.$store.dispatch("getTasksFromDB");
+            this.$store.dispatch('deleteTask', this.id);
+            this.updateState();
         }
     } 
 }

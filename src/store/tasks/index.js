@@ -132,36 +132,15 @@ export default {
                 // the task object must be re-linked to TaskNode since IndexedDB removes that link
                 task = new TaskNode(task, task.parentTask, task.subtasks);
                 task.handleTask(payload);
-                    /* const parentTask = task;
-
-                    if(payload.subtaskId) {
-                        task = Finder.findItem(task.subtasks, payload.subtaskId);
-                    }
-
-                    switch(payload.command) {
-                        case 'ADD_SUBTASK':
-                            task.subtasks.push(payload.subtask);
-                            break;
-                        case 'TOGGLE':
-                            task.completed = !task.completed;
-                            break;
-                        case 'EDIT':
-                            task.name = payload.name;
-                            break;
-                        case 'DELETE_SUBTASK':
-                            var index = parentTask.subtasks.findIndex(elem => elem.id === payload.subtaskId);
-                            parentTask.subtasks.splice(index, 1);
-                            break;      
-                    } */
             });
         },
         async deleteTask(context, payload) {
             await db.deleteItem('Tasks', payload);
         },
-        async getTasksFromDB(context, payload) {
+        /* async getTasksFromDB(context, payload) {
             const tasks = await db.getItems('Tasks', payload.index, payload.indexVal);
             context.state.tasks = tasks; 
-        },
+        } ,
         async filterTasks(context, payload) {
             context.state.filteredTasks = [];
             var fetchedTasks = await db.getItems('Tasks', 'index', payload.indexVal);
@@ -173,28 +152,13 @@ export default {
                         context.state.filteredTasks.push(elem);
                 }
             }
-        }/* ,
-        async getTasksFromDB(context, payload) {
-            if(!payload) {
-                // replace with context.state['storeprop']
-                context.state.tasks = await db.getItems('Tasks', 'index', 'regular');
-            } else {
-                // replace with payload.itemIDs
-                if(payload.taskIDs) {
-                    // decide whether or not you'll keep filteredItems
-                    context.state.filteredTasks = [];
-                    var fetchedTasks = await db.getItems('Tasks', 'index', payload.indexVal);
-
-                    for(const id of payload.taskIDs) {
-                        for(let i = 0; i < fetchedTasks.length; i++) {
-                            let elem = fetchedTasks[i];
-                            if(elem.id === id) 
-                                context.state.filteredTasks.push(elem);
-                        }
-                    }
-                }
-            }
-        } */
+        },*/
+        setTasks(context, payload) {
+            context.state.tasks = payload;
+        },
+        setFilteredTasks(context, payload) {
+            context.state.filteredTasks = payload;
+        }
     }
 }
 /* TASK: Create a utility for generating or at least incrementing IDs(if created manually)

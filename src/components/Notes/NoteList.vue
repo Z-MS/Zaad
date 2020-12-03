@@ -9,7 +9,7 @@
 						</div>
 						<dialog :id="String(note.id)">
 							<div class="header-bar">
-								<edit-note :text="note.noteText" :id="String(note.id)" :indexVal="indexVal" @close-edit="close(note.id)"/>
+								<edit-note :text="note.noteText" :id="String(note.id)" @update="updateState" @close-edit="close(note.id)"/>
 							</div>
 						</dialog> 
 						<p class="note-text" @click="show(note.id)">
@@ -42,18 +42,17 @@ export default {
 	}),
 	props: {
 		noteIDs: { type: Array, required: false },
-		indexVal: { type: String, required: false, default: 'regular' } // noteID and indexVal
+		indexVal: { type: String, required: false } // noteID and indexVal
 	},
 	components: {
 		ResizableText, EditNote
 	},
 	created() {
-		if(!this.$store.getters.getNotes.length) {
-			if(this.noteIDs) {
-				console.log("Check me!");
-				this.$store.dispatch('filterNotes', { noteIDs: this.noteIDs, indexVal: 'project' });
+		if(!this.$store.getters.getNotes.length || !this.$store.getters.getFilteredNotes.length) {
+			if(this.noteIDs) {	
+				this.$store.dispatch('getItemsFromDB', { store: 'Notes', indexVal: this.indexVal, itemIDs: this.noteIDs });
 			} else {
-				this.$store.dispatch('getNotesFromDB', { index: 'index', indexVal: 'regular' });
+				this.$store.dispatch('getItemsFromDB', { store: 'Notes' });
 			}
 		}
 	},
@@ -61,16 +60,21 @@ export default {
 		notes() {
 			// returns an array of objects
 			if(this.noteIDs) {
-				console.log("FIltered run!");
 				return this.$store.getters.getFilteredNotes;
 			}
 			else {
-				console.log("I ran");
 				return this.$store.getters.getNotes;
 			}
 		}
 	},
 	methods: {
+		async updateState() {
+			if(this.noteIDs) {
+                await this.$store.dispatch('getItemsFromDB', { store: 'Notes', indexVal: this.indexVal, itemIDs: this.noteIDs });
+            }  else {
+                await this.$store.dispatch('getItemsFromDB', { store: 'Notes' });
+            }
+		},
 		toggleNew() {
 			this.noteText = "";
 			this.isNew = !this.isNew;
@@ -78,13 +82,13 @@ export default {
 		createNote() {
 			var notesIndex = this.noteIDs ? 'project' : 'regular';
 			if(this.noteText) {
-				this.$store.dispatch("addNote", { 
+				this.$store.dispatch('addNote', { 
 					noteText: this.noteText,
 					index: notesIndex
 				});
 			}
  
-			this.$store.dispatch('getNotesFromDB', { index: 'index', indexVal: notesIndex });
+			this.updateState();
 			this.toggleNew();
 		},
 		cancel() {
