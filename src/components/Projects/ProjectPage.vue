@@ -1,46 +1,46 @@
 <template>
     <div id="main">
-        <div>
-            <div class="project-head" v-if="!isEditing" @click="toggleItem(isEditing)">
-                <h1>{{ project.name }}</h1>
-                <p>{{ project.description }}</p>
-            </div>
-            <form @submit.prevent="saveChanges" v-else>
+        <div class="project-head" v-if="!isEditing" @click="toggleItem(isEditing)">
+            <h1>{{ project.name }}</h1>
+            <p>{{ project.description }}</p>
+            <p>{{ project.noteIDs.length }}</p>
+        </div>
+        <form @submit.prevent="saveChanges" v-else>
                 <input type="text" v-model="project.name"/>
                 <input type="text" v-model="project.description"/>
                 <button type="submit" class="success">Save</button>
                 <button type="button" class="danger" @click="toggleEdit">Cancel</button>
             </form>
-            <div class="project-content">
-                <div class="tasks">
-                    <p class="category">TASKS</p>
-                    <button class="success" @click="show('new-task')">Create new task</button>
-                        <dialog id="new-task">
-                            <p>New task</p>
-                            <form @submit.prevent="createTask(newTask.taskName, newTask.subtasks, newTask.index)">
-                                <input type="text" placeholder="Task name" v-model="newTask.name">
-                                <ul>
-                                    <li v-for="subtask in newTask.subtasks" :key="subtask.id"><checkbox :item="subtask"/></li>
-                                </ul>
-                                <span class="ico">add</span>
-                                <input type="text" placeholder="Add new item" @keyup="addSubtask" v-model="newTask.subtaskText">
-                            </form>
-                            <button class="danger" @click="close('new-task')">Close</button>
-                        </dialog>
-                    <div id="task" v-for="task in tasks" :key="task.id">
-                        <task-page :id="task.id" :view="'list'" @add="createSubtask(task.id, 'sweet')"/>
-                    </div>
+        <div class="project-content">
+            <div class="tasks">
+                <p class="category">TASKS</p>
+                <button class="success" @click="show('new-task')">Create new task</button>
+                <dialog id="new-task">
+                    <p>New task</p>
+                    <form @submit.prevent="createTask(newTask.taskName, newTask.subtasks, newTask.index)">
+                        <input type="text" placeholder="Task name" v-model="newTask.name">
+                        <ul>
+                            <li v-for="subtask in newTask.subtasks" :key="subtask.id"><checkbox :item="subtask"/></li>
+                        </ul>
+                        <span class="ico">add</span>
+                        <input type="text" placeholder="Add new item" @keyup="addSubtask" v-model="newTask.subtaskText">
+                    </form>
+                    <button class="danger" @click="close('new-task')">Close</button>
+                </dialog>
+                <div id="task" v-for="task in tasks" :key="task.id">
+                    <task-page :id="task.id" :view="'list'" @add="createSubtask(task.id, 'sweet')"/>
                 </div>
-                <div class="notes">
-                    <p class="category">NOTES</p> 
-                    <button class="success" @click="show('new-note')">Create new note</button>
-                    <dialog id="new-note">
-                        <p>New note</p>
-                        <button class="danger" @click="close('new-note')">Close</button>
-                    </dialog>
-                    <div>
-                        <notes-list :noteIDs="project.noteIDs" :indexVal="project"/>
-                    </div>
+            </div>
+            <div class="notes">
+                <p class="category" >NOTES<span class="ico" @click="reset">add</span></p>
+                 
+                <!-- <button class="success" @click="show('new-note')">Create new note</button> -->
+                <dialog id="new-note">
+                    <p>New note</p>
+                    <button class="danger" @click="close('new-note')">Close</button>
+                </dialog>
+                <div>
+                    <notes-list :toggle="creatingNote" :projectID="this.id" :noteIDs="project.noteIDs" :isProject="true" @add="createNote" @update="updateState" @toggle="reset"/>
                 </div>
             </div>
         </div>
@@ -56,6 +56,7 @@ import Checkbox from '../Checkbox';
 
 export default {
     data: () => ({
+        creatingNote: false,
         isEditing: false,
         newTask: { subtasks: [] } /* create properties taskName, subtasks and index so I can easily use the createTask
         function from the mixin */
@@ -67,9 +68,7 @@ export default {
         id: { type: String, required: true }
     },
     mounted() {
-        if(!this.$store.getters.getFilteredTasks.length) {
-            this.$store.dispatch('getItemsFromDB', { store: 'Tasks', itemIDs: this.project.taskIDs, indexVal: 'project' });
-        } 
+        this.$store.dispatch('getItemsFromDB', { store: 'Tasks', itemIDs: this.project.taskIDs, indexVal: 'project' }); 
     },
     mixins: [TaskActions],
     computed: {
@@ -81,7 +80,15 @@ export default {
         }
     },
     methods: {
-        // async updateState() {},
+        async updateState() {
+            await this.$store.dispatch('getItemsFromDB', { store: 'Projects' });
+            await this.$store.dispatch('getItemsFromDB', { store: 'Notes', indexVal: 'project', itemIDs: this.project.noteIDs });
+            await this.$store.dispatch('getItemsFromDB', { store: 'Tasks', itemIDs: this.project.taskIDs, indexVal: 'project' });
+        },
+        reset() {
+            this.updateState();
+            this.creatingNote = !this.creatingNote;
+        },
         toggleEdit() {
             this.isEditing = !this.isEditing
         },
@@ -90,6 +97,7 @@ export default {
             this.toggleEdit();
         },
         createNote() {
+            // add to note noteIDs
             this.$store.dispatch("addNote", {
                 noteText: "New note that says things about things",
                 index: 'project'
@@ -122,52 +130,48 @@ export default {
 </script>
 
 <style scoped>
-    .grid {
-        display: grid;
-        width: 80%;
+    #main {
         margin-left: 20%;
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-        gap: 10px;
-        background-color: wheat;
     }
-
-    .item {
-        display: grid;
-        justify-content: center;
-        background-color: white;
-        
-    }
-
-    .one {
-        grid-column: span 2
-    }
-
-    /* #main {
-        min-height: 100vh;
-    } */
 
     .project-head {
         background-color: white;
+        margin-bottom: 1rem;
     }
 
     .project-head > p {
-        margin: 0;
+        margin-left: 1rem;
         padding: 0;
-        text-align: center;
         color: rgb(83, 97, 126);
     }
 
+    .project-head > h1 {
+        text-align: left;
+        margin-left: 1rem;
+    }
+
     .category {
-        width: 80%;
-        padding-top: 3rem;
-        padding-left: 50%;
+        margin: 0;
+        text-align: center;
+        background-color: grey;
         font-size: 2rem;
         color: var(--deepblue);
     }
 
     .project-content {
-        background-color: white;
+        display: flex;
+        justify-content: space-around;
+        /* background-color: white; */
+    }
+
+    .tasks {
+        width: 65%;
+        border: 1px solid black;
+    }
+
+    .notes {
+        width: 30%;
+        border: 1px solid black;
     }
 
     input {

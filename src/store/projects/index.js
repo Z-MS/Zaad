@@ -2,6 +2,7 @@ import Finder from '../../utils/finder'
 import DateTime from '../../utils/DateTime';
 import db from '../../db/db'
 import pNode from '../../utils/ProjectNode';
+import id from '../../utils/idgen';
 
 export default {
     state: {
@@ -35,10 +36,7 @@ export default {
         ]
     },
     getters: {
-        getProjects: (state) => {
-
-            return state.projects;
-        },
+        getProjects: state => state.projects,
         getProject: state => id => {
             return Finder.findItem(state.projects, 'id', id);
             // return state.projects.find(elem => elem.id === id);
@@ -47,35 +45,29 @@ export default {
     actions: {
         async addProject(context, payload) {
             var [currentDate] = DateTime.getDateTime();
-            var newProject = {
-                id: payload.id, // constant
-                name: payload.projectName, // editable
+            var projectID = payload.id ? payload.id : id.generate();
+
+            var newProject = new pNode({
+                id: projectID, // constant
+                name: payload.name, // editable
                 description: payload.description, // editable
-                notes: payload.notes, // editable
                 completed: false, // toggleable
                 dates: {
                     startDate: currentDate, // constant
-                    expCompletionDate: "TBD" // editable if completionStatus is false - of true, template should display 'Completion date' instead of 'Expected comp...'
+                    completionDate: "TBD" // editable if completionStatus is false - of true, template should display 'Completion date' instead of 'Expected comp...'
                 },
-                images: payload.images, // editable
-                taskIDs: payload.tasks/* Array of task IDs */ // editable
-            }
+                // images: payload.images, // editable
+                noteIDs: [], // editable
+                taskIDs: []/* Array of task IDs */ // editable
+            }, null, payload.phases);
 
             await db.addItem('Projects', newProject);
         },
-        async editProject(context, payload) {
-            // project name, description,notes
-            var project = Finder.findItem(context.state.projects, 'id', payload.id);
-            switch(payload.field) {
-                case 'name': 
-                    project.name = payload.content;
-                    break;
-                case 'description':
-                    project.description = payload.content;
-                    break;
-                case 'notes':
-                    project.notes = payload.content;
-            }
+        async handleProject(context, payload) {
+            await db.editItem('Projects', payload.projectID, (project) => {
+                project = new pNode(project, project.parentProject, project.phases);
+                project.handleProject(payload);
+            });
         },
         async deleteProject (context, payload) {
             await db.deleteItem('Projects', payload);
@@ -86,7 +78,9 @@ export default {
         },
         async getProjectsFromDB() {
             await db.getItems('Projects');
-            console.log(pNode);
+        },
+        setProjects(context, payload) {
+            context.state.projects = payload;
         }
     }
 }

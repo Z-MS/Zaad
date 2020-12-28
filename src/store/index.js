@@ -17,9 +17,9 @@ export default new Vuex.Store({
             var items;
             var action;
             if(!payload.itemIDs) {
-                // replace with context.state['storeprop']
+                var index = payload.index ? payload.index : undefined;
                 action = `set${payload.store}`;
-                items = await db.getItems(payload.store, 'index', 'regular');
+                items = await db.getItems(payload.store, index, 'regular');
                 context.dispatch(action, items);
             } else {
                 // decide whether or not you'll keep filteredItems

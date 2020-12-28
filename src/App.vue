@@ -36,6 +36,7 @@
 * {
     box-sizing: border-box;
     font-family: 'Segoe UI';
+
 }
 
 :root {
@@ -48,7 +49,7 @@
 
 body {
 	// background: linear-gradient(45deg, #6cfd9f, #6887ff);
-    background-color: white;
+    background-color: #eff5f8;
 	min-height: 100vh;
 	overflow: auto;
 	// margin: 0;
@@ -87,11 +88,7 @@ body {
     // width: 80%;
 	margin-bottom: 1rem;
     margin-left: 1rem;
-	font-size: 1.8rem;
-}
-
-.nav__text {
-    font-size: 1.5rem;
+	font-size: 1.4rem;
 }
 
 .nav__icon {
@@ -140,6 +137,8 @@ ul {
 	font-family: 'IcoMoon';
 	src: url('./assets/fonts/IcoMoon-Free.ttf');
 }
+
+
 
 @font-face {
     font-family: 'Nunito regular';

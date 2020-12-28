@@ -34,6 +34,10 @@ export default {
             var [currentDate] = DateTime.getDateTime();
             // add a snippet of the note to randomly generated characters
             var idPrefix = id.generate();
+            if(payload.command) {
+                payload.noteID = idPrefix;
+                context.dispatch('handleProject', payload);
+            }
 
             var newNote = {
                 id: idPrefix,
@@ -46,7 +50,10 @@ export default {
             await db.addItem('Notes', newNote);
         },
         async deleteNote(context, payload) {
-            await db.deleteItem('Notes', payload);
+            if(payload.command) {
+                context.dispatch('handleProject', payload);
+            }
+            await db.deleteItem('Notes', payload.id);
         },
         async editNote(context, payload) {
             payload.excerpt = snippet.snip(payload.text);

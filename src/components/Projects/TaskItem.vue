@@ -121,6 +121,7 @@ span.row:hover {
         opacity: 1;
     }
 }
+
 .popup {
     position: relative;
     display: inline-block;

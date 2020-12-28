@@ -22,7 +22,9 @@ export default {
     }),
     props: {
         text: { type: String },
-        id: { type: String, required: true }
+        id: { type: String, required: true },
+        isProject: { type: Boolean, required: false, default: false },
+        projectID: { type: String, required: false }
     },
     components: {
         ConfirmDialog
@@ -44,14 +46,21 @@ export default {
         },
         saveChanges() {
             if(this.edited) {
-                this.$store.dispatch('editNote', { text: this.editedText, id: Number(this.id) })
+                this.$store.dispatch('editNote', { text: this.editedText, id: this.id })
                 this.$emit('update');
             }
             this.close();
         },
         deleteNote(id) {
-            this.$store.dispatch('deleteNote', id);
+            var note = { id: id };
+            if(this.isProject) {
+                note.projectID = this.projectID;
+                note.command = 'DELETE_NOTE';
+            }
+
+            this.$store.dispatch('deleteNote', note);
             this.$emit('update');
+            this.close();
         },
         toggleDialog() {
             this.isOpen = !this.isOpen;

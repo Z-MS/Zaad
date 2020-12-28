@@ -1,6 +1,13 @@
 <template>
     <div>
-        <button class="success">Create new project</button>
+        <button class="success" @click="show">Create new project</button>
+        <dialog id="create-dialog">
+            <form @submit.prevent="close">
+                <input type="text" placeholder="Project name" v-model="projName"/>
+                <input type="text" placeholder="Description" v-model="description"/>
+                <button type="submit" class="success" @click="createProject">Submit</button>
+            </form>
+        </dialog>
         <div class="grid"> 
             <div class="item" v-for="project in projects" :key="project.id" @click="$router.    push(`/project/${project.id}`)">
                 <div class="project-head">
@@ -11,7 +18,7 @@
                 <div>
                     <ul>
                         <li><span class="ico">flag</span><p class="info-text">{{ project.dates.startDate }}</p></li>
-                        <li><span class="ico">todo</span><p class="info-text">{{ project.taskIDs.length }} tasks </p></li>
+                        <!-- <li><span class="ico">todo</span><p class="info-text">{{ project.taskIDs.length }} tasks </p></li> -->
                     </ul>
                 </div>
                 <svg width="400" height="100">
@@ -28,19 +35,40 @@
 
 export default {
     data: () => ({
-        
+        projName: "",
+        description: ""
     }),
     components: {
     },
+    created() {
+        this.updateState();
+    },
     computed: {
         projects() {
-            return this.$store.getters.getProjects
+            return this.$store.getters.getProjects;
         }
     },
     methods: {
+        async updateState() {
+            await this.$store.dispatch('getItemsFromDB', { store: 'Projects' });
+        },
         tasks() {
             return this.$store.getters.getTasks;
-        }
+        },
+        createProject() {
+            this.$store.dispatch('addProject', { name: this.projName, description: this.description });
+            this.updateState();
+            this.projName = "";
+            this.description = "";
+        },
+        show() {
+			var diag = document.getElementById("create-dialog");	
+			diag.showModal();
+		}, 
+		close() {
+			var diag = document.getElementById("create-dialog");
+			diag.close();
+		}
     }
 }
 

@@ -117,6 +117,10 @@ export default {
             var [currentDate] = DateTime.getDateTime();
             var taskID = payload.id ? payload.id : id.generate();
             
+            if(payload.command) {
+                context.dispatch('handleProject', { command: payload.command, taskID: taskID });
+            }
+
             var newTask = new TaskNode({
                 id: taskID,
                 name: payload.name,

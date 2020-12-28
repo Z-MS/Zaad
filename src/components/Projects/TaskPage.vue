@@ -59,7 +59,6 @@ export default {
     props: {
         id: { type: String, required: true },
         view: { type: String, required: true },
-        indexVal: { type: String, required: false },
         taskIDs: { type: Array, required: false } // Task IDs are for tasks in projects
     },
     computed: {
@@ -89,7 +88,7 @@ export default {
     methods: {
         async updateState() {
             if(this.taskIDs) {
-                await this.$store.dispatch('getItemsFromDB', { store: 'Tasks', indexVal: this.indexVal, itemIDs: this.taskIDs });
+                this.$emit('update');
             }  else {
                 await this.$store.dispatch('getItemsFromDB', { store: 'Tasks' });
             }  
