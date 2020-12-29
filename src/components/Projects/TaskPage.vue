@@ -59,7 +59,8 @@ export default {
     props: {
         id: { type: String, required: true },
         view: { type: String, required: true },
-        taskIDs: { type: Array, required: false } // Task IDs are for tasks in projects
+        isProject: { type: Boolean, required: false },
+        projectID: { type: String, required: false }
     },
     computed: {
         task() {
@@ -87,7 +88,7 @@ export default {
     },
     methods: {
         async updateState() {
-            if(this.taskIDs) {
+            if(this.isProject) {
                 this.$emit('update');
             }  else {
                 await this.$store.dispatch('getItemsFromDB', { store: 'Tasks' });
@@ -105,7 +106,12 @@ export default {
             this.subtaskText = "";
         },
         deleteTask() {
-            this.$store.dispatch('deleteTask', this.id);
+            var task = { id: this.id }
+            if(this.isProject) {
+                task.command = 'DELETE_SUBTASK';
+                task.projectID = this.projectID;
+            }
+            this.$store.dispatch('deleteTask', task);
             this.updateState();
         }
     } 

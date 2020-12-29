@@ -62,7 +62,7 @@ export default {
 		} else {
 			if(!this.$store.getters.getNotes.length) {
 				console.log('normal');
-				this.$store.dispatch('getItemsFromDB', { store: 'Notes', index: 'index' });
+				this.$store.dispatch('getItemsFromDB', { store: 'Notes', index: 'index', indexVal: 'regular' });
 			}
 		}
 	},
@@ -94,7 +94,6 @@ export default {
 		toggleNew() {
 			this.noteText = "";
 			if(this.isProject) {
-				console.log('why');
 				this.$emit('toggle');
 			} else {
 				this.isNew = !this.isNew;

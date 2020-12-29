@@ -3,7 +3,7 @@
         <div class="project-head" v-if="!isEditing" @click="toggleItem(isEditing)">
             <h1>{{ project.name }}</h1>
             <p>{{ project.description }}</p>
-            <p>{{ project.noteIDs.length }}</p>
+            <p>{{ project.noteIDs }}</p>
         </div>
         <form @submit.prevent="saveChanges" v-else>
                 <input type="text" v-model="project.name"/>
@@ -17,18 +17,19 @@
                 <button class="success" @click="show('new-task')">Create new task</button>
                 <dialog id="new-task">
                     <p>New task</p>
-                    <form @submit.prevent="createTask(newTask.taskName, newTask.subtasks, newTask.index)">
+                    <form @submit.prevent="createTask(newTask.taskName, newTask.subtasks, project.taskIDs)">
                         <input type="text" placeholder="Task name" v-model="newTask.name">
                         <ul>
                             <li v-for="subtask in newTask.subtasks" :key="subtask.id"><checkbox :item="subtask"/></li>
                         </ul>
                         <span class="ico">add</span>
                         <input type="text" placeholder="Add new item" @keyup="addSubtask" v-model="newTask.subtaskText">
+                        <button class="danger" @click="close('new-task')">Close</button>
+                        <button class="success" type="submit">SUBMIT</button>
                     </form>
-                    <button class="danger" @click="close('new-task')">Close</button>
                 </dialog>
                 <div id="task" v-for="task in tasks" :key="task.id">
-                    <task-page :id="task.id" :view="'list'" @add="createSubtask(task.id, 'sweet')"/>
+                    <task-page :id="task.id" :view="'list'"/>
                 </div>
             </div>
             <div class="notes">

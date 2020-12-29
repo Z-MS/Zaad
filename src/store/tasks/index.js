@@ -118,7 +118,7 @@ export default {
             var taskID = payload.id ? payload.id : id.generate();
             
             if(payload.command) {
-                context.dispatch('handleProject', { command: payload.command, taskID: taskID });
+                context.dispatch('handleProject', { command: payload.command, id: taskID });
             }
 
             var newTask = new TaskNode({
@@ -139,6 +139,9 @@ export default {
             });
         },
         async deleteTask(context, payload) {
+            if(payload.command) {
+                context.dispatch('handleProject', payload);
+            }
             await db.deleteItem('Tasks', payload);
         },
         /* async getTasksFromDB(context, payload) {

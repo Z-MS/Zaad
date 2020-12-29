@@ -35,7 +35,7 @@ export default {
             // add a snippet of the note to randomly generated characters
             var idPrefix = id.generate();
             if(payload.command) {
-                payload.noteID = idPrefix;
+                payload.id = idPrefix;
                 context.dispatch('handleProject', payload);
             }
 

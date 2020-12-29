@@ -2,26 +2,22 @@ import id from '../../utils/idgen';
 
 export default {
 	methods: {
-		createTask(taskName, subtasks, index) {
-			this.$store.dispatch("addTask", {
+		createTask(taskName, subtasks, itemIDs) {
+			this.$store.dispatch('addTask', {
                 name: taskName, 
                 subtasks: subtasks,
-                index: index
+                index: 'index'
             }); 
-            this.$store.dispatch("getTasksFromDB");
+            this.$store.dispatch('getItemsFromDB', { store: 'Tasks', index: 'index', indexVal: 'project', itemIDs: itemIDs });
 		},
-		createSubtask(parentTaskID, subtaskText) {
+		createSubtask(parentTaskID, subtaskText, itemIDs) {
 			const idPrefix = id.generate();
-            this.$store.dispatch("handleTask", {
+            this.$store.dispatch('handleTask', {
                 taskId: parentTaskID, 
                 subtask:  { id: idPrefix, name: subtaskText },
                 command: 'ADD_SUBTASK' 
             });
-            this.$store.dispatch("getTasksFromDB");
-		},
-		toggleItem(item) {
-			item = !item;
-			return item;
+            this.$store.dispatch('getItemsFromDB', { store: 'Tasks', index: 'index', indexVal: 'project', itemIDs: itemIDs });
 		},
 		getPercentCompleted(task) {
             const total = task.subtasks.length;

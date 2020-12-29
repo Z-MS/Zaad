@@ -27,9 +27,6 @@ export default class pNode {
  
     deleteNote(noteID) {
         const index = this.noteIDs.findIndex(elem => elem === noteID);
-        if(index === 0) {
-            // create a new array starting from the second element and set that to noteIDs
-        }
         this.noteIDs.splice(index, 1);
     }
 
@@ -49,16 +46,16 @@ export default class pNode {
                 this.addPhase(payload.phase);
                 break;
             case 'ADD_NOTE':
-                project.noteIDs.push(payload.noteID);
+                project.noteIDs.push(payload.id);
                 break;
             case 'DELETE_NOTE':
-                this.deleteNote(payload.noteID);
+                this.deleteNote(payload.id);
                 break;   
             case 'ADD_TASK':
-                project.taskIDs.push(payload.taskIDs);
+                project.taskIDs.push(payload.id);
                 break;
             case 'DELETE_TASK':
-                this.deleteTask(payload.taskID);
+                this.deleteTask(payload.id);
                 break;
             case 'TOGGLE':
                 project.completed = !project.completed;
