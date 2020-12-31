@@ -3,7 +3,6 @@
         <div class="project-head" v-if="!isEditing" @click="toggleItem(isEditing)">
             <h1>{{ project.name }}</h1>
             <p>{{ project.description }}</p>
-            <p>{{ project.noteIDs }}</p>
         </div>
         <form @submit.prevent="saveChanges" v-else>
                 <input type="text" v-model="project.name"/>
@@ -17,19 +16,24 @@
                 <button class="success" @click="show('new-task')">Create new task</button>
                 <dialog id="new-task">
                     <p>New task</p>
-                    <form @submit.prevent="createTask(newTask.taskName, newTask.subtasks, project.taskIDs)">
+                    <div>
                         <input type="text" placeholder="Task name" v-model="newTask.name">
                         <ul>
-                            <li v-for="subtask in newTask.subtasks" :key="subtask.id"><checkbox :item="subtask"/></li>
+                            <li v-for="(subtask, index) in newTask.subtasks" :key="index" @dblclick="deleteSubtask(index)"><checkbox :item="subtask"/></li>
                         </ul>
-                        <span class="ico">add</span>
-                        <input type="text" placeholder="Add new item" @keyup="addSubtask" v-model="newTask.subtaskText">
-                        <button class="danger" @click="close('new-task')">Close</button>
-                        <button class="success" type="submit">SUBMIT</button>
-                    </form>
+
+                        <div id="list-control">
+                            <span class="ico">add</span>
+                            <input type="text" placeholder="Add new item" @keyup="addSubtask" v-model="newTask.subtaskText">
+                        </div>
+
+                        <button class="danger" type="button" @click="close('new-task')">Close</button>
+                        <button class="success" type="submit" @click="createTask">SUBMIT</button>
+                    </div>
+                        
                 </dialog>
                 <div id="task" v-for="task in tasks" :key="task.id">
-                    <task-page :id="task.id" :view="'list'"/>
+                    <task-page :id="task.id" :view="'list'" :isProject="true" :projectID="id" @update="updateState('Tasks')"/>
                 </div>
             </div>
             <div class="notes">
@@ -41,7 +45,7 @@
                     <button class="danger" @click="close('new-note')">Close</button>
                 </dialog>
                 <div>
-                    <notes-list :toggle="creatingNote" :projectID="this.id" :noteIDs="project.noteIDs" :isProject="true" @add="createNote" @update="updateState" @toggle="reset"/>
+                    <notes-list :toggle="creatingNote" :projectID="this.id" :noteIDs="project.noteIDs" :isProject="true" @update="updateState('Notes')" @toggle="reset"/>
                 </div>
             </div>
         </div>
@@ -51,8 +55,6 @@
 <script>
 import TaskPage from './TaskPage';
 import NotesList from '../Notes/NoteList';
-import id from '../../utils/idgen';
-import TaskActions from './TaskActions';
 import Checkbox from '../Checkbox';
 
 export default {
@@ -71,7 +73,6 @@ export default {
     mounted() {
         this.$store.dispatch('getItemsFromDB', { store: 'Tasks', itemIDs: this.project.taskIDs, indexVal: 'project' }); 
     },
-    mixins: [TaskActions],
     computed: {
         project() {
             return this.$store.getters.getProject(this.id)
@@ -81,13 +82,16 @@ export default {
         }
     },
     methods: {
-        async updateState() {
+        async updateState(store) {
             await this.$store.dispatch('getItemsFromDB', { store: 'Projects' });
-            await this.$store.dispatch('getItemsFromDB', { store: 'Notes', indexVal: 'project', itemIDs: this.project.noteIDs });
-            await this.$store.dispatch('getItemsFromDB', { store: 'Tasks', itemIDs: this.project.taskIDs, indexVal: 'project' });
+            if(store === 'Notes') {
+                await this.$store.dispatch('getItemsFromDB', { store: 'Notes', indexVal: 'project', itemIDs: this.project.noteIDs });
+            } else {
+                await this.$store.dispatch('getItemsFromDB', { store: 'Tasks', itemIDs: this.project.taskIDs, indexVal: 'project' });           
+            }
         },
         reset() {
-            this.updateState();
+            this.updateState('Notes');
             this.creatingNote = !this.creatingNote;
         },
         toggleEdit() {
@@ -97,18 +101,22 @@ export default {
             this.$store.dispatch("editProject", { id: this.id, content: this.project.name, field: "name"});
             this.toggleEdit();
         },
-        createNote() {
-            // add to note noteIDs
-            this.$store.dispatch("addNote", {
-                noteText: "New note that says things about things",
-                index: 'project'
-            });
+        // NOTE: The following four methods are used for new tasks only. The 'TaskPage' component will handle any subsequent subtask creations
+        createTask() {
+            this.close('new-task');
+            this.$store.dispatch('addTask', {
+                name: this.newTask.name, 
+                subtasks: this.newTask.subtasks,
+                index: 'project',
+                projectID: this.id,
+                command: 'ADD_TASK_ID'
+            }); 
+            this.updateState('Tasks');
         },
-        addSubtask(event) { // This is different from 'createSubtask' in the mixin as it does not push the subtask to the DB
+        addSubtask(event) {
             if(event.keyCode === 13) {
                 var subtask = { 
                     name: this.newTask.subtaskText,
-                    id: id.generate(),
                     completed: false
                 };
 
@@ -116,6 +124,13 @@ export default {
             this.newTask.subtaskText = "";
             }
             return;
+        },
+        toggleSubtask(index) {
+            var item = this.newTask.subtasks[index];
+            item.completed = !item.completed;
+        },
+        deleteSubtask(index) {
+            this.newTask.subtasks.splice(index, 1);
         },
         show(id) {
 			var diag = document.getElementById(id);

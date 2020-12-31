@@ -64,8 +64,8 @@ export default {
             if(this.edited) {
                 this.$store.dispatch('handleTask', {
                     name: this.editedText, 
-                    subtaskId: this.subtask.id, 
-                    taskId: this.parentTaskID, 
+                    subtaskID: this.subtask.id, 
+                    taskID: this.parentTaskID, 
                     command: 'EDIT' 
                 });
                 
@@ -75,8 +75,8 @@ export default {
         },
         toggleComplete() {
             this.$store.dispatch('handleTask', {
-                subtaskId: this.subtask.id,
-                taskId: this.parentTaskID, 
+                subtaskID: this.subtask.id,
+                taskID: this.parentTaskID, 
                 command: 'TOGGLE'
             });       // update on emit     
             this.$emit('update');
@@ -93,8 +93,8 @@ export default {
         },
         deleteSubtask() { 
             this.$store.dispatch('handleTask', { 
-                subtaskId: this.subtask.id,
-                taskId: this.parentTaskID,
+                subtaskID: this.subtask.id,
+                taskID: this.parentTaskID,
                 command: 'DELETE_SUBTASK'
             });
             this.$emit('update');

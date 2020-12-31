@@ -1,3 +1,5 @@
+import id from './idgen';
+
 export default class TaskNode {
     constructor(task, parentTask, subtasks, index) {
         this.id = task.id;
@@ -21,19 +23,20 @@ export default class TaskNode {
         this.subtasks.push(new TaskNode(task, this, null, null));
     }
 
-    deleteSubtask(subtaskId) {
-        const index = this.subtasks.findIndex(elem => elem.id === subtaskId)
+    deleteSubtask(subtaskID) {
+        const index = this.subtasks.findIndex(elem => elem.id === subtaskID)
         this.subtasks.splice(index, 1);
     }
 
     handleTask(payload) {
         var task = this;
-        if(payload.subtaskId) {
-            task = this.getSubtask(payload.subtaskId);
+        if(payload.subtaskID) {
+            task = this.getSubtask(payload.subtaskID);
         }
 
         switch(payload.command) {
             case 'ADD_SUBTASK':
+                payload.subtask.id = id.generate();
                 this.addSubtask(payload.subtask);
                 break;
             case 'TOGGLE':
@@ -43,7 +46,7 @@ export default class TaskNode {
                 task.name = payload.name;
                 break;
             case 'DELETE_SUBTASK':
-                this.deleteSubtask(payload.subtaskId);
+                this.deleteSubtask(payload.subtaskID);
                 break;
         }
     }

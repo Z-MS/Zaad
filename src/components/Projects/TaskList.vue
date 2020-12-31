@@ -21,9 +21,9 @@
 
             <!-- <form @submit.prevent="createTask"> -->
                 <div id="list-items">
-                    <span class="row" v-for="subtask in subtasks" :key="subtask.id">
-                        <checkbox :item="subtask" @toggle="toggleComplete(subtask.id)"/>
-                        <span class="ico" @click="deleteSubtask(subtask.id)">&#xea0f;</span>
+                    <span class="row" v-for="(subtask, index) in subtasks" :key="index">
+                        <checkbox :item="subtask" @toggle="toggleComplete(index)"/>
+                        <span class="ico" @click="deleteSubtask(index)">&#xea0f;</span>
                     </span>
                 </div>    
                 <div id="list-control">
@@ -38,7 +38,6 @@
 
 <script>
 import TaskPage from './TaskPage';
-import id from '../../utils/idgen';
 import Checkbox from '../Checkbox';
 
 export default {
@@ -55,7 +54,7 @@ export default {
     },
     mounted() {
         if(!this.$store.getters.getTasks.length) {
-            this.$store.dispatch('getItemsFromDB', { store: 'Tasks' });
+            this.$store.dispatch('getItemsFromDB', { store: 'Tasks', index: 'index' });
 		}
     },
     computed: {
@@ -73,8 +72,8 @@ export default {
             this.resetAll();
             this.isNew = !this.isNew;
         },
-        toggleComplete(id) {
-            var item = this.subtasks.find(elem => elem.id === id);
+        toggleComplete(index) {
+            var item = this.subtasks[index];
             item.completed = !item.completed;
         },
         toggleEdit() {
@@ -97,22 +96,21 @@ export default {
                 subtasks: this.subtasks,
                 index: 'regular'
             }); 
-            this.$store.dispatch('getItemsFromDB', { store: 'Tasks' });
+            this.$store.dispatch('getItemsFromDB', { store: 'Tasks', index: 'index' });
             this.toggleNew();
             this.resetAll();
         },
         addSubtask() {
             var subtask = { 
                 name: this.subtaskText,
-                id: id.generate(),
                 completed: false
             };
 
             this.subtasks.push(subtask);
             this.subtaskText = "";
         },
-        deleteSubtask(id) {
-            var index = this.subtasks.findIndex(elem => elem.id === id);
+        deleteSubtask(index) {
+            // var index = this.subtasks.findIndex(elem => elem.id === id);
             this.subtasks.splice(index, 1);
         },
         triggerAddButton(event) {

@@ -70,7 +70,14 @@ export default {
             });
         },
         async deleteProject (context, payload) {
-            await db.deleteItem('Projects', payload);
+            // DELETE PROJECT NOTES
+            payload.noteIDs.forEach(async function(noteID) {
+                await db.deleteItem('Notes', noteID);
+            });
+            // DELETE PROJECT TASKS
+            payload.taskIDs.forEach(async function(taskID) {
+                await db.deleteItem('Tasks', taskID);
+            });
         },
         completeProject: (context, payload) => {
             var project = context.state.projects.find(elem => elem.id === payload.id);

@@ -25,14 +25,17 @@
                     <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
                     <p>{{ getPercentCompleted }}</p>
                 </div>
+                <form @submit.prevent="addSubtask">
+                    <input v-model="subtaskText" type="text" placeholder="Enter a new item"/>
+                </form>
             </div>
             <div>
                 <ul v-for="subtask in task.subtasks" :key="subtask.id">
                     <li>   
-                        <task-item :subtask="subtask" :parentTaskID="task.id" @increase-percentage="updateState"/>
+                        <task-item :subtask="subtask" :parentTaskID="task.id" @update="updateState"/>
                     </li>
                 </ul>
-                <span>Add a new item</span><span class="ico" @click="$emit('add')">add</span>
+                <!-- <span>Add a new item</span><span class="ico" @click="$emit('add')">add</span> -->
             </div>
         </div>
     </div>
@@ -41,7 +44,6 @@
 <script>
 
 import TaskItem from "./TaskItem";
-import id from '../../utils/idgen';
 import PercentCircle from "../PercentCircle"
 
 export default {
@@ -60,11 +62,16 @@ export default {
         id: { type: String, required: true },
         view: { type: String, required: true },
         isProject: { type: Boolean, required: false },
-        projectID: { type: String, required: false }
+        projectID: { type: String, required: false },
+        taskIDs: { type: Array, required: false }
     },
     computed: {
         task() {
-            return this.$store.getters.getTask(this.id)
+            if(this.isProject) {
+                return this.$store.getters.getFilteredTask(this.id);
+            } else {
+                return this.$store.getters.getTask(this.id);
+            }
         },
         subtasks() {
             return this.task.subtasks;
@@ -89,16 +96,15 @@ export default {
     methods: {
         async updateState() {
             if(this.isProject) {
-                this.$emit('update');
+                this.$emit('update'); 
             }  else {
-                await this.$store.dispatch('getItemsFromDB', { store: 'Tasks' });
+                await this.$store.dispatch('getItemsFromDB', { store: 'Tasks', index: 'index' });
             }  
         },
         addSubtask() {
-            const idPrefix = id.generate();
             this.$store.dispatch('handleTask', {
-                taskId: this.id, 
-                subtask:  { id: idPrefix, name: this.subtaskText },
+                taskID: this.id, 
+                subtask:  { name: this.subtaskText },
                 command: 'ADD_SUBTASK' 
             });
             this.updateState();
@@ -108,7 +114,7 @@ export default {
         deleteTask() {
             var task = { id: this.id }
             if(this.isProject) {
-                task.command = 'DELETE_SUBTASK';
+                task.command = 'DELETE_TASK_ID';
                 task.projectID = this.projectID;
             }
             this.$store.dispatch('deleteTask', task);

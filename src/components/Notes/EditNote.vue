@@ -55,7 +55,7 @@ export default {
             var note = { id: id };
             if(this.isProject) {
                 note.projectID = this.projectID;
-                note.command = 'DELETE_NOTE';
+                note.command = 'DELETE_NOTE_ID';
             }
 
             this.$store.dispatch('deleteNote', note);

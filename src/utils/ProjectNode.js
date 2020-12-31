@@ -45,16 +45,16 @@ export default class pNode {
             case 'ADD_PHASE':
                 this.addPhase(payload.phase);
                 break;
-            case 'ADD_NOTE':
+            case 'ADD_NOTE_ID':
                 project.noteIDs.push(payload.id);
                 break;
-            case 'DELETE_NOTE':
+            case 'DELETE_NOTE_ID':
                 this.deleteNote(payload.id);
                 break;   
-            case 'ADD_TASK':
+            case 'ADD_TASK_ID':
                 project.taskIDs.push(payload.id);
                 break;
-            case 'DELETE_TASK':
+            case 'DELETE_TASK_ID':
                 this.deleteTask(payload.id);
                 break;
             case 'TOGGLE':

@@ -1,4 +1,3 @@
-import Finder from '../../utils/finder'
 import DateTime from '../../utils/DateTime';
 import id from '../../utils/idgen';
 import db from '../../db/db';
@@ -106,9 +105,8 @@ export default {
         filteredTasks: []
     },
     getters: {
-        getTask: (state) => (id) => {
-            return Finder.findItem(state.tasks, 'id', id);            // return state.tasks.find(elem => elem.id === id);
-        },
+        getTask: (state) => (id) => state.tasks.find(elem => elem.id === id),
+        getFilteredTask: (state) => (id) => state.filteredTasks.find(elem => elem.id === id),
         getTasks: (state) => state.tasks,
         getFilteredTasks: (state) => state.filteredTasks
     },  
@@ -116,9 +114,11 @@ export default {
         async addTask (context, payload) {
             var [currentDate] = DateTime.getDateTime();
             var taskID = payload.id ? payload.id : id.generate();
-            
+            payload.subtasks.forEach(subtask => subtask.id = id.generate());
+
             if(payload.command) {
-                context.dispatch('handleProject', { command: payload.command, id: taskID });
+                payload.id = taskID;
+                context.dispatch('handleProject', payload);
             }
 
             var newTask = new TaskNode({
@@ -132,7 +132,7 @@ export default {
             await db.addItem('Tasks', newTask); 
         },
         async handleTask(context, payload) {
-            await db.editItem('Tasks', payload.taskId, (task) => {
+            await db.editItem('Tasks', payload.taskID, (task) => {
                 // the task object must be re-linked to TaskNode since IndexedDB removes that link
                 task = new TaskNode(task, task.parentTask, task.subtasks);
                 task.handleTask(payload);
@@ -142,7 +142,7 @@ export default {
             if(payload.command) {
                 context.dispatch('handleProject', payload);
             }
-            await db.deleteItem('Tasks', payload);
+            await db.deleteItem('Tasks', payload.id);
         },
         /* async getTasksFromDB(context, payload) {
             const tasks = await db.getItems('Tasks', payload.index, payload.indexVal);

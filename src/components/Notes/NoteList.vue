@@ -61,8 +61,7 @@ export default {
 			this.$store.dispatch('getItemsFromDB', { store: 'Notes', indexVal: 'project', itemIDs: this.noteIDs });
 		} else {
 			if(!this.$store.getters.getNotes.length) {
-				console.log('normal');
-				this.$store.dispatch('getItemsFromDB', { store: 'Notes', index: 'index', indexVal: 'regular' });
+				this.$store.dispatch('getItemsFromDB', { store: 'Notes', index: 'index' });
 			}
 		}
 	},
@@ -88,7 +87,7 @@ export default {
 			if(this.isProject) {
 				this.$emit('update');
             }  else {
-                await this.$store.dispatch('getItemsFromDB', { store: 'Notes' });
+                await this.$store.dispatch('getItemsFromDB', { store: 'Notes', index: 'index' });
             }
 		},
 		toggleNew() {
@@ -109,7 +108,7 @@ export default {
 				};
 
 				if(this.isProject) {
-					newNote.command = this.isProject ? 'ADD_NOTE' : undefined;
+					newNote.command = this.isProject ? 'ADD_NOTE_ID' : undefined;
 					newNote.projectID = this.projectID;
 				}
 
