@@ -27,8 +27,8 @@
                     </span>
                 </div>    
                 <div id="list-control">
-                    <span id="add" class="ico" @click="addSubtask">add</span>
-                    <input id="new-subtask" v-model="subtaskText" placeholder="Add new item" @keyup="triggerAddButton"/>
+                    <span id="add" class="ico" @click="addSubtask">add<span>Add new item</span></span>
+                    <input id="new-subtask" v-model="subtaskText" placeholder="New task item" @keyup="triggerAddButton"/>
                 </div>
                 <button class="success block" @click="createTask">Submit</button>
             <!-- </form> -->

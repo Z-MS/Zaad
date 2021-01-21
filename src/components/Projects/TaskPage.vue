@@ -1,15 +1,11 @@
 <template>
     <div class="background">
-        <div v-show="view === 'grid'">
+        <div v-if="view === 'grid'">
             <div class="sticky">
                 <div class="row">
                     <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
-     
-                   <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted" />
-                </div>
-                <form @submit.prevent="addSubtask">
-                    <input v-model="subtaskText" type="text" placeholder="Enter a new item"/>
-                </form>    
+                    <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted" />
+                </div>    
             </div>
             <div>
                 <ul v-for="subtask in task.subtasks" :key="subtask.id">
@@ -17,17 +13,21 @@
                         <task-item :subtask="subtask" :parentTaskID="task.id" @update="updateState"/>
                     </li>
                 </ul>
+                <form @submit.prevent="addSubtask" v-show="newSubtask">
+                    <input id="subtask-input" ref="subtask-input" v-model="subtaskText" type="text" placeholder="New item"/>
+                </form>
+                 <span @click="toggleNewSubtask">
+                        <span class="ico add-icon add-icon--grid">add</span>
+                        <span class="add-text">Add a new item</span>
+                </span>
             </div>
         </div>
-        <div class="list" v-show="view === 'list'">
+        <div class="list" v-else>
             <div class="sticky">
                 <div class="row">
                     <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
                     <p>{{ getPercentCompleted }}</p>
                 </div>
-                <form @submit.prevent="addSubtask">
-                    <input v-model="subtaskText" type="text" placeholder="Enter a new item"/>
-                </form>
             </div>
             <div>
                 <ul v-for="subtask in task.subtasks" :key="subtask.id">
@@ -35,7 +35,15 @@
                         <task-item :subtask="subtask" :parentTaskID="task.id" @update="updateState"/>
                     </li>
                 </ul>
-                <!-- <span>Add a new item</span><span class="ico" @click="$emit('add')">add</span> -->
+                <div id="form-controls">
+                    <form id="subtask-form" @submit.prevent="addSubtask" v-show="newSubtask">
+                        <input id="subtask-input" ref="subtask-input" v-model="subtaskText" type="text" placeholder="New item"/>
+                    </form>
+                    <span @click="toggleNewSubtask">
+                        <span class="ico add-icon add-icon--list">add</span>
+                        <span class="add-text">Add a new item</span>
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -49,7 +57,9 @@ import PercentCircle from "../PercentCircle"
 export default {
     data: () => ({
         circumference: 2 * Math.PI * 40,
-        subtaskText: ""
+        subtaskText: "",
+        newSubtask: false
+
     })/* ,
     mounted() {
         this.updateState();
@@ -110,6 +120,7 @@ export default {
             this.updateState();
 
             this.subtaskText = "";
+            this.toggleNewSubtask();
         },
         deleteTask() {
             var task = { id: this.id }
@@ -119,6 +130,15 @@ export default {
             }
             this.$store.dispatch('deleteTask', task);
             this.updateState();
+        },
+        toggleNewSubtask() {
+            this.newSubtask = !this.newSubtask;
+            if(this.newSubtask) {
+                this.$nextTick(() => {
+                    this.$refs['subtask-input'].focus();
+                });
+            }
+            
         }
     } 
 }
@@ -197,6 +217,36 @@ li {
     font-size: 1.5rem;
 }
 
+#form-controls {
+    margin-left: 1.6rem;
+}
+
+#subtask-input {
+    margin-right: 9.5rem;
+    font-size: 1.33rem;
+}
+
+.add-text {
+    display: inline-block;
+    margin-top: 0.5rem;
+    /* margin-right: -2rem; */
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: rgb(37, 182, 37);
+}
+
+.add-icon {
+    padding-right: 1rem;
+    color: rgb(37, 182, 37);
+}
+
+.add-icon--grid {
+    margin-left: -8.5rem;
+}
+
+.add-icon--list {
+    margin-left: -15rem;
+}
 
 /* svg {
     width: 30%;

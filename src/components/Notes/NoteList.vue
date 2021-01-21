@@ -1,8 +1,8 @@
 <template>
 	<div class="note-container">
-		<div id="regular" v-if="!toggleSwitch">
-			<button class="success nunito-bold" @click="toggleNew">Create a new note</button>
-				<div class="grid">
+		<div id="regular" v-show="!toggleSwitch">
+			<button id="create-btn" class="success nunito-bold" :class="{ listbtn: isProject }" @click="toggleNew">Create a new note</button>
+				<div class="grid" v-if="!isProject">
 					<div v-for="note in notes" :key="note.id" class="item">	
 						<dialog :id="String(note.id)">
 							<div class="header-bar">
@@ -24,8 +24,30 @@
 						</div>
 					</div>
 				</div>
+				<div v-else class="list">
+					<div v-for="note in notes" :key="note.id" class="item item--list">	
+						<dialog :id="String(note.id)">
+							<div class="header-bar">
+								<edit-note :text="note.noteText" :id="String(note.id)" :isProject="isProject" :projectID="projectID" @update="updateState" @close-edit="close(note.id)"/>
+							</div>
+						</dialog> 
+						<div id="text-container" @click="show(note.id)">
+							<p class="note-text">
+								{{ note.excerpt }}
+							</p>
+						</div>
+						<div class="toolbar">
+							<ul>
+								<li class="ico highlight--white tool">write</li>
+								<li class="ico highlight--white tool">copy</li>
+								<li class="ico tool">radio-checked2</li>
+								<li class="ico highlight--white tool">bin</li>
+							</ul>
+						</div>
+					</div>
+				</div>
 		</div>
-		<div id="new" v-else>
+		<div id="new" v-if="isNew">
 			<form @submit.prevent="createNote">
 				<button class="success" type="submit">Save</button>
 				<button class="danger" type="button" @click="cancel">Cancel</button>
@@ -138,10 +160,6 @@ export default {
 
 <style scoped>
 
-.note-container {
-	margin-left: 20%;
-}
-
 textarea {
     box-sizing: border-box;
     display: block;
@@ -159,8 +177,14 @@ dialog {
 	border-radius: 1rem;
 }
 
-button {
+#create-btn {
+	display: inline-block;
+	margin-left: 20%;
 	border-radius: 0.5rem;
+}
+
+#create-btn.listbtn {
+	display: none;
 }
 
 #regular {
@@ -170,6 +194,7 @@ button {
 
 .grid {
 	display: grid;
+	margin-left: 20%;
 	grid-template-columns: repeat(3, 1fr);
 	grid-auto-rows: min-content;
 	gap: 1rem;
@@ -187,11 +212,17 @@ button {
 	box-shadow: 0 0 0.75rem rgba(0, 0, 0, 0.25);
 }
 
+.item--list + .item--list {
+	margin-top: 0.5rem;
+}
 
+.item--list:first-child {
+	margin-top: 1rem;
+}
 
 .list {
-	width: 60%;
-	border: 2px solid black;
+	margin: 0 auto;
+	width: 95%;
 }
 
 .row {
