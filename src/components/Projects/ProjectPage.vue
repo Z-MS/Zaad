@@ -33,7 +33,7 @@
                         
                 </dialog>
                 <div id="task" v-for="task in tasks" :key="task.id">
-                    <task-page :id="task.id" :view="'list'" :isProject="true" :projectID="id" @update="updateState('Tasks')"/>
+                    <task-page :id="task.id" :view="'list'" :is-project="true" :project-id="id" @update="updateState('Tasks')"/>
                 </div>
             </div>
             <div class="notes">
@@ -45,7 +45,7 @@
                     <button class="danger" @click="close('new-note')">Close</button>
                 </dialog>
                 <div>
-                    <notes-list :toggle="creatingNote" :projectID="this.id" :noteIDs="project.noteIDs" :isProject="true" @update="updateState('Notes')" @toggle="reset"/>
+                    <notes-list :toggle="creatingNote" :project-id="this.id" :note-ids="project.noteIDs" :isProject="true" @update="updateState('Notes')" @toggle="reset"/>
                 </div>
             </div>
         </div>

@@ -35,8 +35,7 @@
 <style lang="scss">
 * {
     box-sizing: border-box;
-    font-family: 'Segoe UI';
-
+    font-family: 'Fira Sans', 'Segoe UI';
 }
 
 :root {
@@ -98,6 +97,11 @@ body {
     right: 20px;
 }
 
+.nav__text {
+    font-family: 'Nunito regular';
+    font-size: 1.5rem;
+}
+
 #projects-icon {
     left: 2px;
     padding-right: 1.3rem;
@@ -138,7 +142,10 @@ ul {
 	src: url('./assets/fonts/IcoMoon-Free.ttf');
 }
 
-
+@font-face {
+    font-family: 'Fira Sans';
+    src: url('./assets/fonts/FiraSans-Regular.ttf');
+}
 
 @font-face {
     font-family: 'Nunito regular';

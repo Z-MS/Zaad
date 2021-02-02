@@ -51,7 +51,7 @@ export default {
     },
     props: {
         subtask: { type: Object, required: true },
-        parentTaskID: { type: String, required: true }
+        parentTaskid: { type: String, required: true }
     },
     methods: {
         toggleEdit() {
@@ -65,7 +65,7 @@ export default {
                 this.$store.dispatch('handleTask', {
                     name: this.editedText, 
                     subtaskID: this.subtask.id, 
-                    taskID: this.parentTaskID, 
+                    taskID: this.parentTaskid, 
                     command: 'EDIT' 
                 });
                 
@@ -76,7 +76,7 @@ export default {
         toggleComplete() {
             this.$store.dispatch('handleTask', {
                 subtaskID: this.subtask.id,
-                taskID: this.parentTaskID, 
+                taskID: this.parentTaskid, 
                 command: 'TOGGLE'
             });       // update on emit     
             this.$emit('update');
@@ -94,7 +94,7 @@ export default {
         deleteSubtask() { 
             this.$store.dispatch('handleTask', { 
                 subtaskID: this.subtask.id,
-                taskID: this.parentTaskID,
+                taskID: this.parentTaskid,
                 command: 'DELETE_SUBTASK'
             });
             this.$emit('update');

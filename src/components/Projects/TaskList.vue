@@ -142,13 +142,13 @@ export default {
 
     .item {
         display: grid;
-        justify-content: center;
+        /* justify-content: center; */
         background-color: white;
         box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.25);
     }
 
     .rounded {
-        border-radius: 1em;
+        border-radius: 1rem;
     }
 
     #new {

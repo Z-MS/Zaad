@@ -6,7 +6,7 @@
 					<div v-for="note in notes" :key="note.id" class="item">	
 						<dialog :id="String(note.id)">
 							<div class="header-bar">
-								<edit-note :text="note.noteText" :id="String(note.id)" :isProject="isProject" :projectID="projectID" @update="updateState" @close-edit="close(note.id)"/>
+								<edit-note :text="note.noteText" :id="String(note.id)" :is-project="isProject" :projectID="projectID" @update="updateState" @close-edit="close(note.id)"/>
 							</div>
 						</dialog> 
 						<div id="text-container" @click="show(note.id)">
@@ -71,7 +71,7 @@ export default {
 	}),
 	props: {
 		toggle: { type: Boolean, required: false, default: false },
-		noteIDs: { type: Array, required: false },
+		noteIds: { type: Array, required: false },
 		isProject: { type: Boolean, required: false, default: false },
 		projectID: { type: String, required: false }
 	},
@@ -80,7 +80,7 @@ export default {
 	},
 	created() { // -&- Search for the diff btw me and mounted. See if you can use computed props in me
 		if(this.isProject) {	
-			this.$store.dispatch('getItemsFromDB', { store: 'Notes', indexVal: 'project', itemIDs: this.noteIDs });
+			this.$store.dispatch('getItemsFromDB', { store: 'Notes', indexVal: 'project', itemIDs: this.noteIds });
 		} else {
 			if(!this.$store.getters.getNotes.length) {
 				this.$store.dispatch('getItemsFromDB', { store: 'Notes', index: 'index' });
@@ -165,7 +165,7 @@ textarea {
     display: block;
     width: 85%;
     margin-left: 10%;
-    color: black;
+    color: rgb(39, 38, 38);
 	resize: none;
 	font-size: 1.5rem;
 }

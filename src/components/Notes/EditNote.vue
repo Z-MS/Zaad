@@ -98,7 +98,7 @@ textarea {
     border: 0.5px solid rgba(163, 159, 159, 0.5);
     border-radius: 0.5rem;
     display: block;
-    color: black;
+    color: rgb(39, 38, 38);
 	resize: none;
 	font-size: 1.5rem;
 }

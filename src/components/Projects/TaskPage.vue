@@ -2,23 +2,20 @@
     <div class="background">
         <div v-if="view === 'grid'">
             <div class="sticky">
-                <div class="row">
-                    <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
-                    <percent-circle :id="task.id" :radius="40" :progress="getPercentCompleted" />
-                </div>    
+                <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
             </div>
             <div>
                 <ul v-for="subtask in task.subtasks" :key="subtask.id">
                     <li>   
-                        <task-item :subtask="subtask" :parentTaskID="task.id" @update="updateState"/>
+                        <task-item :subtask="subtask" :parent-taskid="task.id" @update="updateState"/>
                     </li>
                 </ul>
                 <form @submit.prevent="addSubtask" v-show="newSubtask">
                     <input id="subtask-input" ref="subtask-input" v-model="subtaskText" type="text" placeholder="New item"/>
                 </form>
                  <span @click="toggleNewSubtask">
-                        <span class="ico add-icon add-icon--grid">add</span>
-                        <span class="add-text">Add a new item</span>
+                    <span class="ico add-icon add-icon--grid">add</span>
+                    <span class="add-text">Add a new item</span>
                 </span>
             </div>
         </div>
@@ -32,7 +29,7 @@
             <div>
                 <ul v-for="subtask in task.subtasks" :key="subtask.id">
                     <li>   
-                        <task-item :subtask="subtask" :parentTaskID="task.id" @update="updateState"/>
+                        <task-item :subtask="subtask" :parent-taskid="task.id" @update="updateState"/>
                     </li>
                 </ul>
                 <div id="form-controls">
@@ -52,7 +49,7 @@
 <script>
 
 import TaskItem from "./TaskItem";
-import PercentCircle from "../PercentCircle"
+// import PercentCircle from "../PercentCircle"
 
 export default {
     data: () => ({
@@ -66,7 +63,7 @@ export default {
     } */,
     components: {
         TaskItem,
-        PercentCircle
+        // PercentCircle
     },
     props: {
         id: { type: String, required: true },
@@ -170,11 +167,6 @@ export default {
     justify-content: space-around;
 }
 
-.item {
-    display: grid;
-    justify-content: center;    
-}
-
 .background {
     background-color: white;
     /*height: 50vh;*/
@@ -183,7 +175,7 @@ export default {
 }
 
 .large {
-    width: 60%;
+    /* width: 60%; */
     font-family: 'Nunito bold';
     font-size: 2em;
     text-align: center;
@@ -195,7 +187,7 @@ export default {
 
 ul {
     margin-bottom: 1rem;
-    margin-left: 1.6rem;
+    margin-left: 0.5rem;
     /* centre this and make the bottom reasonably spaced */
 }
 
