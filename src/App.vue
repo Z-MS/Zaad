@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <ul>
+      <ul id="nav__list">
         <li class="nav__item">
             <router-link to="/">
                 <span class="ico nav__icon">history</span>
@@ -65,7 +65,7 @@ body {
 #nav {
 	margin-top: 0%; 
 	padding: 0;
-	width: 20%;
+	width: 16%;
 	background-color: #0E0562;
 	position: fixed;
 	top: 0;
@@ -83,6 +83,10 @@ body {
 	}
 }
 
+#nav__list {
+    margin-top: 1.25rem; 
+}
+
 .nav__item {
     // width: 80%;
 	margin-bottom: 1rem;
@@ -92,19 +96,19 @@ body {
 
 .nav__icon {
     position: relative;
-    font-size: 2rem;
+    font-size: 1.5rem;
     top: 2px;
     right: 20px;
 }
 
 .nav__text {
     font-family: 'Nunito regular';
-    font-size: 1.5rem;
+    font-size: 1.15rem;
 }
 
 #projects-icon {
-    left: 2px;
-    padding-right: 1.3rem;
+    // left: 2px;
+    // padding-right: 1.3rem;
 }
 
 button {
@@ -127,8 +131,8 @@ button {
 }
 
 ul {
-    list-style: none;
     padding-inline-start: 0;
+    list-style: none;
     font-size: 1.5rem;
 }
 
@@ -159,6 +163,8 @@ ul {
 
 .ico {
 	font-family: 'IcoMoon';
+    padding: 0 0.5em 0 0.5em;
+    vertical-align: middle;
 }
 
 .nunito-reg {

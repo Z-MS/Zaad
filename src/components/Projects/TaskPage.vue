@@ -177,7 +177,7 @@ export default {
 .large {
     /* width: 60%; */
     font-family: 'Nunito bold';
-    font-size: 2em;
+    font-size: 1.35rem;
     text-align: center;
 }
 

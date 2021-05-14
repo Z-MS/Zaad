@@ -1,7 +1,7 @@
 <template>
 	<div class="note-container">
 		<div id="regular" v-show="!toggleSwitch">
-			<button id="create-btn" class="success nunito-bold" :class="{ listbtn: isProject }" @click="toggleNew">Create a new note</button>
+			<button id="create-btn" class="success nunito-bold" :class="{ listbtn: isProject }" @click="toggleNew">Create a new note<span class="ico">add</span></button>
 				<div class="grid" v-if="!isProject">
 					<div v-for="note in notes" :key="note.id" class="item">	
 						<dialog :id="String(note.id)">
@@ -180,7 +180,9 @@ dialog {
 #create-btn {
 	display: inline-block;
 	margin-left: 20%;
+	padding: 0.5rem;
 	border-radius: 0.5rem;
+	font-size: 1rem;
 }
 
 #create-btn.listbtn {
@@ -188,14 +190,14 @@ dialog {
 }
 
 #regular {
-	width: 95%;
-    margin: auto;
+	/*width: 95%;*/
+    margin: 0 auto;
 }
 
 .grid {
 	display: grid;
-	margin-left: 20%;
-	grid-template-columns: repeat(3, 1fr);
+	/*margin-left: -2rem;*/
+	grid-template-columns: repeat(3, 42%);
 	grid-auto-rows: min-content;
 	gap: 1rem;
 	/*border: 2px solid yellow;	 */
@@ -204,12 +206,12 @@ dialog {
 .item {
 	display: grid;
 	position: relative;
-	/* justify-content: center;
+	/*justify-content: center;
 	align-content: center; */
 	/*border: 2px solid red;*/
 	background-color: white;
 	border-radius: 0.5rem;
-	box-shadow: 0 0 0.75rem rgba(0, 0, 0, 0.25);
+	box-shadow: 0 0 0.15rem rgba(0, 0, 0, 0.25);
 }
 
 .item--list + .item--list {
@@ -221,8 +223,8 @@ dialog {
 }
 
 .list {
-	margin: 0 auto;
-	width: 95%;
+	/*margin: 0 auto;*/
+	/*width: 95%;*/
 }
 
 .row {
@@ -247,6 +249,7 @@ dialog {
 	/* width: 80%; */
 	/* max-width: 50%; */
 	overflow-x: hidden;
+	font-size: 0.8em;
 	/* flex-grow: 0; */
 }
 

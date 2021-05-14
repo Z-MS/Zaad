@@ -1,3 +1,3 @@
 <template>
-<h1>Welcome to Ztask</h1>	
+<h1>Welcome to Zaad</h1>	
 </template>

@@ -9,6 +9,7 @@ import EditNote from '../components/Notes/EditNote.vue'
 import ProjectPage from '../components/Projects/ProjectPage.vue'
 import TaskList from '../components/Projects/TaskList.vue'
 import TaskPage from '../components/Projects/TaskPage.vue'
+import SvgTest from '../views/SvgTest.vue'
 
 Vue.use(VueRouter)
 
@@ -70,6 +71,10 @@ Vue.use(VueRouter)
     name: 'TaskPage',
     component: TaskPage,
     props: true
+  },
+  {
+    path: '/svg',
+    component: SvgTest
   }
 ]
 

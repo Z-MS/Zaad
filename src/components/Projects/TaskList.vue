@@ -137,17 +137,18 @@ export default {
         grid-template-columns: repeat(3, 1fr);
         grid-auto-rows: 1fr;
         gap: 10px;
-        margin-left: 20%;
+        /*margin-left: 20%;*/
     }
 
     .item {
         display: grid;
         /* justify-content: center; */
         background-color: white;
-        box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.25);
+        box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.25);
     }
 
     .rounded {
+        font-size: 1rem;
         border-radius: 1rem;
     }
 
