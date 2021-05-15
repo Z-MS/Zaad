@@ -4,25 +4,29 @@
       <ul id="nav__list">
         <li class="nav__item">
             <router-link to="/">
-                <span class="ico nav__icon">history</span>
+                <!-- <span class="ico nav__icon">history</span> -->
+                <unicon name="history" class="nav__icon" fill="limegreen"></unicon>
                 <span class="nav__text">Recents</span>
             </router-link>
         </li> 
         <li class="nav__item">
             <router-link to="/tasks/">
-                <span class="ico nav__icon">&#xe9ba;</span>
+                <unicon name="clipboard-notes" class="nav__icon" fill="limegreen"></unicon>
+                <!-- <span class="ico nav__icon">&#xe9ba;</span> -->
                 <span class="nav__text">Todos</span>
             </router-link>
         </li>
         <li class="nav__item">
             <router-link to="/notes">
-                <span class="ico nav__icon">&#xe926;</span>
+                <unicon name="file-alt" class="nav__icon" fill="limegreen"></unicon>
+                <!-- <span class="ico nav__icon">&#xe926;</span> -->
                 <span class="nav__text">Notes</span>
             </router-link>
         </li> 
         <li class="nav__item">
             <router-link to="/projects">
-                <span id="projects-icon" class="ico nav__icon">&#xe930;</span>
+                <unicon name="folder-open" class="nav__icon" fill="limegreen"></unicon>
+                <!-- <span id="projects-icon" class="ico nav__icon">&#xe930;</span> -->
                 <span class="nav__text">Projects</span>
             </router-link>
         </li> 
@@ -72,13 +76,12 @@ body {
 	left: 0;
 	height: 100%;
 	overflow: auto;
-	// font-size: 1.5rem;
 	a {
-		font-weight: bold;
 		color: white;
 
 		&.router-link-exact-active {
-			color: var(--olive)
+			color: var(--olive);
+            font-weight: 600;
 		}
 	}
 }
@@ -90,20 +93,28 @@ body {
 .nav__item {
     // width: 80%;
 	margin-bottom: 1rem;
-    margin-left: 1rem;
+    // margin-left: -75px;
 	font-size: 1.4rem;
 }
 
 .nav__icon {
     position: relative;
-    font-size: 1.5rem;
+    // font-size: 1.5rem;
     top: 2px;
-    right: 20px;
+    right: 15px;
+    // vertical-align: text-bottom;
 }
 
 .nav__text {
     font-family: 'Nunito regular';
     font-size: 1.15rem;
+    vertical-align: text-top;
+    padding-left: 0.5rem;
+    font-weight: 500;
+}
+
+.nav__text:hover {
+    font-weight: 600;
 }
 
 #projects-icon {
@@ -136,7 +147,6 @@ ul {
     font-size: 1.5rem;
 }
 
-
 /*li:hover {
 	background-color: black;
 }*/
@@ -163,8 +173,8 @@ ul {
 
 .ico {
 	font-family: 'IcoMoon';
-    padding: 0 0.5em 0 0.5em;
-    vertical-align: middle;
+    // padding: 0 0.5em 0 0.5em;
+    // vertical-align: middle;
 }
 
 .nunito-reg {

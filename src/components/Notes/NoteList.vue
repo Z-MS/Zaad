@@ -1,7 +1,7 @@
 <template>
 	<div class="note-container">
 		<div id="regular" v-show="!toggleSwitch">
-			<button id="create-btn" class="success nunito-bold" :class="{ listbtn: isProject }" @click="toggleNew">Create a new note<span class="ico">add</span></button>
+			<!-- <button id="create-btn" class="success nunito-bold" :class="{ listbtn: isProject }" @click="toggleNew"><unicon name="plus" height="20"></unicon><span id="plus">New note</span></button> -->
 				<div class="grid" v-if="!isProject">
 					<div v-for="note in notes" :key="note.id" class="item">	
 						<dialog :id="String(note.id)">
@@ -56,12 +56,16 @@
 				</resizable-text>
 			</form>
 		</div>
+		<div @click="toggleNew">
+			<bottom-toolbar>ADD NEW NOTE</bottom-toolbar>
+		</div>
+		
 	</div>
 </template>
 
 <script>
 import ResizableText from '../ResizableText';
-
+import BottomToolbar from '../BottomToolbar';
 import EditNote from './EditNote';
 
 export default {
@@ -76,7 +80,7 @@ export default {
 		projectID: { type: String, required: false }
 	},
 	components: {
-		ResizableText, EditNote
+		ResizableText, EditNote, BottomToolbar
 	},
 	created() { // -&- Search for the diff btw me and mounted. See if you can use computed props in me
 		if(this.isProject) {	
@@ -180,9 +184,13 @@ dialog {
 #create-btn {
 	display: inline-block;
 	margin-left: 20%;
-	padding: 0.5rem;
+	padding-top: 0.5em;
+	padding-bottom: 0.2em;
+	padding-right: 0.75em;
+	padding-left: 0.3em;
 	border-radius: 0.5rem;
 	font-size: 1rem;
+	vertical-align: bottom;
 }
 
 #create-btn.listbtn {
@@ -194,9 +202,14 @@ dialog {
     margin: 0 auto;
 }
 
+#plus {
+	vertical-align: top;
+	padding-left: 1rem;
+}
+
 .grid {
 	display: grid;
-	/*margin-left: -2rem;*/
+	margin-top: 1.25rem;
 	grid-template-columns: repeat(3, 42%);
 	grid-auto-rows: min-content;
 	gap: 1rem;

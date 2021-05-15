@@ -1,11 +1,11 @@
 <template>
     <div>
-        <button v-if="!isNew" class="success rounded" @click="toggleNew">Create new task</button>
+        <!-- <button v-if="!isNew" class="success rounded" @click="toggleNew">Create new task</button> -->
         <!-- Shows list of tasks -->
-        <div class="taskgrid" v-if="!isNew">
+        <div v-if="!isNew">
             <!-- <button class="success ico">plus</button> -->
             <div class="item rounded" v-for="task in tasks" :key="task.id">
-                <task-page :id="task.id" :view="'grid'"/>
+                <task-page :id="task.id" :view="'list'"/>
             </div>
         </div>
         <!-- Opens a new form for creating new tasks -->
@@ -33,12 +33,16 @@
                 <button class="success block" @click="createTask">Submit</button>
             <!-- </form> -->
         </div>
+        <div @click="toggleNew">
+            <bottom-toolbar>ADD NEW TASK</bottom-toolbar>
+        </div>
     </div>
 </template>
 
 <script>
 import TaskPage from './TaskPage';
 import Checkbox from '../Checkbox';
+import BottomToolbar from '../BottomToolbar';
 
 export default {
     data: () => ({
@@ -50,7 +54,8 @@ export default {
 	}),
     components: {
         TaskPage,
-        Checkbox
+        Checkbox,
+        BottomToolbar
     },
     mounted() {
         if(!this.$store.getters.getTasks.length) {
@@ -132,19 +137,14 @@ export default {
 </script>
 
 <style scoped>
-    .taskgrid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-auto-rows: 1fr;
-        gap: 10px;
-        /*margin-left: 20%;*/
-    }
-
     .item {
-        display: grid;
-        /* justify-content: center; */
+        margin-bottom: 1.25rem;
         background-color: white;
         box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.25);
+    }
+
+    .item:first-child {
+        margin-top: 1.6rem;
     }
 
     .rounded {

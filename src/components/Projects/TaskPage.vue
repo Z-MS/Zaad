@@ -1,29 +1,9 @@
 <template>
     <div class="background">
-        <div v-if="view === 'grid'">
-            <div class="sticky">
-                <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
-            </div>
-            <div>
-                <ul v-for="subtask in task.subtasks" :key="subtask.id">
-                    <li>   
-                        <task-item :subtask="subtask" :parent-taskid="task.id" @update="updateState"/>
-                    </li>
-                </ul>
-                <form @submit.prevent="addSubtask" v-show="newSubtask">
-                    <input id="subtask-input" ref="subtask-input" v-model="subtaskText" type="text" placeholder="New item"/>
-                </form>
-                 <span @click="toggleNewSubtask">
-                    <span class="ico add-icon add-icon--grid">add</span>
-                    <span class="add-text">Add a new item</span>
-                </span>
-            </div>
-        </div>
-        <div class="list" v-else>
+        <div class="list">
             <div class="sticky">
                 <div class="row">
                     <p class="large" @dblclick="deleteTask">{{ task.name }}</p>
-                    <p>{{ getPercentCompleted }}</p>
                 </div>
             </div>
             <div>
@@ -67,7 +47,6 @@ export default {
     },
     props: {
         id: { type: String, required: true },
-        view: { type: String, required: true },
         isProject: { type: Boolean, required: false },
         projectID: { type: String, required: false },
         taskIDs: { type: Array, required: false }
@@ -159,9 +138,9 @@ export default {
 }
 
 .list .sticky  {
-    background-color: grey;
+    background-color: #F3F6F9;
 }
-
+ 
 .row {
     display: flex;
     justify-content: space-around;
@@ -186,7 +165,8 @@ export default {
 }
 
 ul {
-    margin-bottom: 1rem;
+    display: block;
+    /*margin-bottom: 1rem;*/
     margin-left: 0.5rem;
     /* centre this and make the bottom reasonably spaced */
 }
@@ -230,10 +210,6 @@ li {
 .add-icon {
     padding-right: 1rem;
     color: rgb(37, 182, 37);
-}
-
-.add-icon--grid {
-    margin-left: -8.5rem;
 }
 
 .add-icon--list {
