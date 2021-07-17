@@ -30,7 +30,13 @@ export default {
         getFilteredNotes: (state) => state.filteredNotes
     },
     actions: {
-        async addNote(context, payload) {
+        async fetchNotesFromDB(context, payload) {
+            const { indexVal } = payload;
+            const notes = await context.dispatch('getItemsFromDB', { store: 'Notes', indexVal });
+            payload.notes = notes;
+            context.dispatch('setNotes', payload);
+        },
+        async createNote(context, payload) {
             var [currentDate] = DateTime.getDateTime();
             // add a snippet of the note to randomly generated characters
             var idPrefix = id.generate();
@@ -39,35 +45,47 @@ export default {
                 context.dispatch('handleProject', payload);
             }
 
-            var newNote = {
+            var note = {
                 id: idPrefix,
                 noteText: payload.noteText,
                 excerpt: snippet.snip(payload.noteText),
                 date: currentDate,
-                index: payload.index
+                indexVal: payload.indexVal
             }
             
-            await db.addItem('Notes', newNote);
+            await db.addItem('Notes', note);
+            context.dispatch('setNote', note);
         },
         async deleteNote(context, payload) {
             if(payload.command) {
                 context.dispatch('handleProject', payload);
             }
             await db.deleteItem('Notes', payload.id);
+            await context.dispatch('fetchNotesFromDB', { indexVal: payload.indexVal });
         },
         async editNote(context, payload) {
             payload.excerpt = snippet.snip(payload.text);
         
-            await db.editItem('Notes', payload.id, (data) => {
+            await db.editItem('Notes', { itemID: payload.id,indexVal: 'regular'}, (data) => {
                 data.noteText = payload.text;
                 data.excerpt = payload.excerpt;
             });
+
+            // THIS IS WHERE(TIME, I MEAN, NOT PLACE) YOU ADD THE ARRAY INDEX TRACKING STUFF
+            // EVERY METHOD OF A STORE THAT UPDATES ITS STATE SHOULD BE RESPONSIBLE FOR FILTERING AFTER CALLING GETFROMDB
+            // context.dispatch(setNote,);
+        },
+        setNote(context, payload) {
+            if(payload.indexVal == 'regular')
+                context.state.notes.push(payload);
+            else
+                context.state.filteredNotes.push(payload)
         },
         setNotes(context, payload) {
-            context.state.notes = payload;
-        },
-        setFilteredNotes(context, payload) {
-            context.state.filteredNotes = payload;
+            if(payload.indexVal == 'regular')
+                context.state.notes = payload.notes;
+            else
+                context.state.filteredNotes = payload.notes;
         }
     }
 }

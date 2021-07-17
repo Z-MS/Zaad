@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="success" @click="show">Create new project</button>
+        <!-- <button class="success" @click="show">Create new project</button>
         <dialog id="create-dialog">
             <form @submit.prevent="close">
                 <input type="text" placeholder="Project name" v-model="projName"/>
@@ -18,7 +18,7 @@
                 <div>
                     <ul>
                         <li><span class="ico">flag</span><p class="info-text">{{ project.dates.startDate }}</p></li>
-                        <!-- <li><span class="ico">todo</span><p class="info-text">{{ project.taskIDs.length }} tasks </p></li> -->
+                        <!-\- <li><span class="ico">todo</span><p class="info-text">{{ project.taskIDs.length }} tasks </p></li> -/->
                     </ul>
                 </div>
                 <svg width="400" height="100">
@@ -26,7 +26,8 @@
                     <line x1="50" y1="5" x2="70" y2="5" stroke="lime" stroke-width="4"/>
                 </svg>
             </div>
-        </div>
+        </div> -->
+        <h1 class="description">Work in Progress. Check back later</h1>
     </div>
 </template>
 
@@ -80,8 +81,8 @@ export default {
     }
 
     .grid {
-        width: 70%;
-        margin-left: 25%;
+        width: 100%;
+        margin-left: 1%;
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;

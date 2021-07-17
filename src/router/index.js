@@ -53,7 +53,7 @@ Vue.use(VueRouter)
   {
     path: '/projects',
     name: 'Projects',
-    component: () => import('../components/Projects/ProjectList.vue')
+    component: () => import('../views/Notes.vue')
   },
   {
     path: '/project/:id',

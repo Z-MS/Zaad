@@ -86,9 +86,7 @@ export default {
 		if(this.isProject) {	
 			this.$store.dispatch('getItemsFromDB', { store: 'Notes', indexVal: 'project', itemIDs: this.noteIds });
 		} else {
-			if(!this.$store.getters.getNotes.length) {
-				this.$store.dispatch('getItemsFromDB', { store: 'Notes', index: 'index' });
-			}
+			this.$store.dispatch('getItemsFromDB', { store: 'Notes' });
 		}
 	},
 	computed: {
@@ -100,7 +98,6 @@ export default {
 				return this.$store.getters.getFilteredNotes;
 			}
 			else {
-				console.log('normal');
 				return this.$store.getters.getNotes;
 			}
 		},
@@ -113,7 +110,7 @@ export default {
 			if(this.isProject) {
 				this.$emit('update');
             }  else {
-                await this.$store.dispatch('getItemsFromDB', { store: 'Notes', index: 'index' });
+                await this.$store.dispatch('getItemsFromDB', { store: 'Notes' });
             }
 		},
 		toggleNew() {
@@ -198,8 +195,8 @@ dialog {
 }
 
 #regular {
-	/*width: 95%;*/
-    margin: 0 auto;
+	width: 100%;
+    margin: 0 1rem 1rem -1.5rem;
 }
 
 #plus {
@@ -243,16 +240,6 @@ dialog {
 .row {
 	display: flex;
 	flex-direction: column;
-}
-
-.note-bottom {
-	/* display: flex; */
-	background-color: gray;
-	width: 100%;
-}
-
-#text-container {
-	margin-bottom: 1.85rem;
 }
 
 .note-text {

@@ -183,7 +183,7 @@ export default {
     }
 
     #form-header {
-        background-color: rgb(204, 204, 35);
+        background-color: rgb(0, 0, 0);
     }
 
     .r-space {

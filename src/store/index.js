@@ -13,30 +13,16 @@ export default new Vuex.Store({
     getters: {},
     mutations: {},
     actions: {
+        async getItemFromDB(context, payload) {
+            const { store, itemID, indexVal } = payload;
+            const item = await db.getItem(store, { itemID, indexVal });
+            return item
+        },
         async getItemsFromDB(context, payload) {
-            var items;
-            var action;
-            if(!payload.itemIDs) {
-                var index = payload.index ? payload.index : undefined;
-                action = `set${payload.store}`;
-                items = await db.getItems(payload.store, index, 'regular');
-                context.dispatch(action, items);
-            } else {
-                // decide whether or not you'll keep filteredItems
-                let filteredItems = [];
-                action = `setFiltered${payload.store}`;
-                items = await db.getItems(payload.store, 'index', payload.indexVal);
-
-                for(const id of payload.itemIDs) {
-                    for(let i = 0; i < items.length; i++) {
-                        let elem = items[i];
-                        if(elem.id === id) 
-                            filteredItems.push(elem);
-                    }
-                }
-                context.dispatch(action, filteredItems);
-            }
-        } // there should be a store prop in the payload obj
+            const { store, indexVal  } = payload;
+            const items = await db.getItems(store, { indexVal });
+            return items;
+        }
     },
     modules: {
         todos: todos,

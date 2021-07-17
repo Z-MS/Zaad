@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <aside id="nav">
       <ul id="nav__list">
         <li class="nav__item">
             <router-link to="/">
@@ -31,8 +31,10 @@
             </router-link>
         </li> 
       </ul>
-    </div>
-    <router-view/>
+    </aside>
+    <main id="view">
+        <router-view/>
+    </main>
   </div>
 </template>
 
@@ -69,7 +71,7 @@ body {
 #nav {
 	margin-top: 0%; 
 	padding: 0;
-	width: 16%;
+	width: 180px;
 	background-color: #0E0562;
 	position: fixed;
 	top: 0;
@@ -115,6 +117,12 @@ body {
 
 .nav__text:hover {
     font-weight: 600;
+}
+
+#view {
+    margin-left: -80px;
+    margin-right: 10px; /* THIS IS WHY IT IS CENTERED */
+    width: 90%;
 }
 
 #projects-icon {
