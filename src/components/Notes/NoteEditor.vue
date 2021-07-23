@@ -1,5 +1,5 @@
 <template>
-	<dialog id="dialog" :open="open">
+	<dialog id="note_dialog" :open="open">
 		<div class="toolbar">
 			<unicon class="toolbar_btn" name="check" fill="lime" v-if="isNew" @click="saveChanges"></unicon> <!-- new -->
 			<unicon class="toolbar_btn" name="ellipsis-h" fill="black" v-else></unicon> 
@@ -22,25 +22,33 @@
 import ResizableText from '@/components/ResizableText';
 
 export default {
+	components: { ResizableText },
 	props: {
 		open: { type: Boolean, required: true },
 		noteObj: { type: Object },
 		isNew: { type: Boolean, required: true }
 	},
-	components: { ResizableText },
+	mounted() {
+		window.addEventListener('click', this.handleClosure);
+	},
+	beforeDestroy() {
+		window.removeEventListener('click', this.handleClosure);
+	},
 	data: () => ({
-		editing: false
+		editing: false,
+		edited: false,
+		editedText: false
 	}),
 	computed: {
 		note() {
-			if(!this.noteObj)
+			if(this.noteObj == null)
 				return { noteText: '' }
 			else
 				return this.noteObj
 		},
 		newText: {
       get() {
-        return this.noteText;
+				return this.note.noteText;
       },
       set(value) {
         this.edited = true;
@@ -54,13 +62,21 @@ export default {
 				if(this.isNew)
 					this.$store.dispatch('createNote', { noteText: this.editedText, indexVal: 'regular' })
 				else
-					this.$store.dispatch('editNote', { text: this.editedText, id: this.id })
+					this.$store.dispatch('editNote', { text: this.editedText, id: this.note.id, indexVal: this.note.indexVal })
       }
       this.close();
     },
 		close() {
-			this.$emit('close-edit');
-			document.querySelector('#dialog').close();
+			if(this.isNew)
+				this.$emit('close-edit', true);
+			else
+				this.$emit('close-edit', false)
+			document.querySelector('#note_dialog').close();
+		},
+		handleClosure(event) {
+			const dialog = document.querySelector('#note_dialog');
+			if(!dialog.contains(event.target) && dialog.open)
+				this.saveChanges();
 		}
 	}
 }
@@ -68,7 +84,7 @@ export default {
 
 <style scoped>
 
-#dialog {
+#note_dialog {
 	width: 65%;
 	border-radius: 5px;
 	border-width: 0.25px;

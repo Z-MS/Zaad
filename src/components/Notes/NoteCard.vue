@@ -1,6 +1,6 @@
 <template>
 	<div class="item">
-		<div id="text-container" @click="$emit('open-edit')">
+		<div id="text-container" @click.stop="$emit('open-edit')">
 			<p class="note-text">
 				{{ note.excerpt }}
 			</p>

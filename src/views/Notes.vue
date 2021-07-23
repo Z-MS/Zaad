@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<button class="btn_new" @click="toggleNew"><span class="new_text" >New note</span><unicon class="uni" name="plus" fill="lime" height="16" width="16"></unicon></button>
-		<note-container :notes="notes" :open-new="isNew"/>
+		<button class="btn_new" @click.stop="toggleNew"><span class="new_text">New note</span><unicon class="uni" name="plus" fill="lime" height="16" width="16"></unicon></button>
+		<note-container :notes="notes" :open-new="isNew" @close-new="toggleNew"/>
 	</div>
 </template>
 
@@ -24,8 +24,9 @@ export default {
 		}
 	},
 	methods: {
-		toggleNew() {
-			this.isNew = !this.isNew;
+		toggleNew(diagNew) {
+			if(diagNew)
+				this.isNew = !this.isNew;
 		} 
 	}
 }

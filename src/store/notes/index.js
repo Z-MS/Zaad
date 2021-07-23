@@ -29,12 +29,52 @@ export default {
         },
         getFilteredNotes: (state) => state.filteredNotes
     },
+    mutations: {
+        updateNotes(state, payload) {
+            var arrIndex;
+            var filterStr; 
+            switch(payload.action) {
+                case 'NEW':
+                    filterStr = payload.note.indexVal == 'regular' ? "notes" : "filteredNotes";
+                    state[filterStr].push(payload.note);
+                    break;
+                case 'EDIT':
+                    filterStr = payload.editedNote.indexVal == 'regular' ? "notes" : "filteredNotes";
+                    arrIndex = state[filterStr].findIndex(note => note.id === payload.editedNote.id);
+                    if(arrIndex == -1)
+                        console.error(`NO ITEM FOUND AT ${arrIndex}`);
+                    state[filterStr].splice(arrIndex, 1, payload.editedNote);
+                    break;
+                case 'DELETE':
+                    filterStr = payload.indexVal == 'regular' ? "notes" : "filteredNotes";
+                    arrIndex = state[filterStr].findIndex(note => note.id === payload.id);
+                    state[filterStr].splice(arrIndex, 1);
+                    break;
+                case 'ALL':
+                    filterStr = payload.indexVal == 'regular' ? "notes" : "filteredNotes";
+                    state[filterStr] = payload.notes;
+                    break;
+            }
+        },
+        setNote(state, payload) {
+            if(payload.indexVal == 'regular')
+                state.notes.push(payload);
+            else
+                state.filteredNotes.push(payload)
+        },
+        setNotes(state, payload) {
+            if(payload.indexVal == 'regular')
+                state.notes = payload.notes;
+            else
+                state.filteredNotes = payload.notes;
+        }
+    },
     actions: {
         async fetchNotesFromDB(context, payload) {
             const { indexVal } = payload;
             const notes = await context.dispatch('getItemsFromDB', { store: 'Notes', indexVal });
             payload.notes = notes;
-            context.dispatch('setNotes', payload);
+            context.commit('updateNotes', { ...payload, action: 'ALL' });
         },
         async createNote(context, payload) {
             var [currentDate] = DateTime.getDateTime();
@@ -54,38 +94,25 @@ export default {
             }
             
             await db.addItem('Notes', note);
-            context.dispatch('setNote', note);
+            context.commit('updateNotes', { note, action: 'NEW' });
         },
         async deleteNote(context, payload) {
             if(payload.command) {
                 context.dispatch('handleProject', payload);
             }
             await db.deleteItem('Notes', payload.id);
-            await context.dispatch('fetchNotesFromDB', { indexVal: payload.indexVal });
+            context.dispatch('updateNotes', { ...payload, action: 'DELETE' });
         },
         async editNote(context, payload) {
             payload.excerpt = snippet.snip(payload.text);
-        
-            await db.editItem('Notes', { itemID: payload.id,indexVal: 'regular'}, (data) => {
+            var editedNote;
+            await db.editItem('Notes', { itemID: payload.id, indexVal: payload.indexVal}, (data) => {
                 data.noteText = payload.text;
                 data.excerpt = payload.excerpt;
-            });
+                editedNote = data;
+            });    
 
-            // THIS IS WHERE(TIME, I MEAN, NOT PLACE) YOU ADD THE ARRAY INDEX TRACKING STUFF
-            // EVERY METHOD OF A STORE THAT UPDATES ITS STATE SHOULD BE RESPONSIBLE FOR FILTERING AFTER CALLING GETFROMDB
-            // context.dispatch(setNote,);
-        },
-        setNote(context, payload) {
-            if(payload.indexVal == 'regular')
-                context.state.notes.push(payload);
-            else
-                context.state.filteredNotes.push(payload)
-        },
-        setNotes(context, payload) {
-            if(payload.indexVal == 'regular')
-                context.state.notes = payload.notes;
-            else
-                context.state.filteredNotes = payload.notes;
+            await context.commit('updateNotes', { editedNote, action: 'EDIT' });
         }
     }
 }
