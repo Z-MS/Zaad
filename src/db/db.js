@@ -51,14 +51,14 @@ export default {
 				storeIndex.openCursor(keyRange).onsuccess = function(event) {
 					let cursor = event.target.result;
 					if(cursor) {
-						if(cursor.primaryKey === info.itemID)
+						if(cursor.primaryKey === info.id)
 							item = cursor.value;
 						else
 							cursor.continue();
 					}
 				}
 			} else {
-				objStore.get(info.itemID).onsuccess = function(event) {
+				objStore.get(info.id).onsuccess = function(event) {
 					item = event.target.result;
 				};
 			}	
@@ -126,9 +126,8 @@ export default {
 			}
 
 			const objStore = transaction.objectStore(store);
-			
 			if(item) {
-				const req = objStore.delete(info.itemID);
+				const req = objStore.delete(info.id);
 				req.onsuccess = function(event) {
 					console.log("delete successful: ", event.target.result);
 				}

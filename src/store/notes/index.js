@@ -100,13 +100,13 @@ export default {
             if(payload.command) {
                 context.dispatch('handleProject', payload);
             }
-            await db.deleteItem('Notes', payload.id);
-            context.dispatch('updateNotes', { ...payload, action: 'DELETE' });
+            await db.deleteItem('Notes', { id: payload.id, indexVal: payload.indexVal });
+            context.commit('updateNotes', { ...payload, action: 'DELETE' });
         },
         async editNote(context, payload) {
             payload.excerpt = snippet.snip(payload.text);
             var editedNote;
-            await db.editItem('Notes', { itemID: payload.id, indexVal: payload.indexVal}, (data) => {
+            await db.editItem('Notes', { id: payload.id, indexVal: payload.indexVal}, (data) => {
                 data.noteText = payload.text;
                 data.excerpt = payload.excerpt;
                 editedNote = data;

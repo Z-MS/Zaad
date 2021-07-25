@@ -2,11 +2,16 @@
 	<dialog id="note_dialog" :open="open">
 		<div class="toolbar">
 			<unicon class="toolbar_btn" name="check" fill="lime" v-if="isNew" @click="saveChanges"></unicon> <!-- new -->
-			<unicon class="toolbar_btn" name="ellipsis-h" fill="black" v-else></unicon> 
-			<!-- <unicon class="toolbar_btn" name="trash-alt" fill="black" @click="close"></unicon> -->
+			<span v-else class="popup">
+				<unicon class="toolbar_btn" name="ellipsis-h" fill="black" @click="togglePopup"></unicon>
+				<span class="popup-bar" :class="{ show: popped }">
+					<li @click="deleteNote">
+						<unicon class="toolbar_btn" name="trash-alt" fill="black" ></unicon>
+						Delete Note
+					</li>
+				</span> 
+			</span>	
 			<unicon class="toolbar_btn" name="x" fill="red" @click="close"></unicon>
-				<!-- <button class="ico toolbar_btn">tick</button>
-				<button class="ico toolbar_btn">cancel</button> -->
 		</div>
 		<div class="diag_wrapper">	
 			<div>
@@ -37,7 +42,8 @@ export default {
 	data: () => ({
 		editing: false,
 		edited: false,
-		editedText: false
+		editedText: false,
+		popped: false
 	}),
 	computed: {
 		note() {
@@ -66,6 +72,10 @@ export default {
       }
       this.close();
     },
+    deleteNote() {
+			this.$store.dispatch('deleteNote', { id: this.note.id, indexVal: this.note.indexVal });
+			this.close();
+    },
 		close() {
 			if(this.isNew)
 				this.$emit('close-edit', true);
@@ -77,6 +87,9 @@ export default {
 			const dialog = document.querySelector('#note_dialog');
 			if(!dialog.contains(event.target) && dialog.open)
 				this.saveChanges();
+		},
+		togglePopup() {
+				this.popped = !this.popped;
 		}
 	}
 }
@@ -131,4 +144,37 @@ export default {
 	outline: 0.2px solid grey;
 	cursor: text;
 }
+
+.popup {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+}
+
+.popup .popup-bar {
+    visibility: hidden;
+    width: 120px;
+    background-color: grey;
+    color: #fff;
+    font-size: 1rem;
+    text-align: center;
+    /*border-radius: 6px;*/
+    padding: 8px 2px;
+    position: absolute;
+    z-index: 1;
+    bottom: 110%;
+    left: 0%;
+    /*margin-left: -90px;*/
+}
+
+.popup-bar li {
+	list-style: none;
+}
+
+.popup .show {
+    visibility: visible;
+    animation: fadeIn 1s;
+}
+
 </style>

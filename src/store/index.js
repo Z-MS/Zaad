@@ -14,8 +14,8 @@ export default new Vuex.Store({
     mutations: {},
     actions: {
         async getItemFromDB(context, payload) {
-            const { store, itemID, indexVal } = payload;
-            const item = await db.getItem(store, { itemID, indexVal });
+            const { store, id, indexVal } = payload;
+            const item = await db.getItem(store, { id, indexVal });
             return item
         },
         async getItemsFromDB(context, payload) {

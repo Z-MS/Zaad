@@ -1,6 +1,6 @@
 <template>
-	<div class="item">
-		<div id="text-container" @click.stop="$emit('open-edit')">
+	<div class="item" @click.stop="$emit('open-edit')">
+		<div id="text-container" >
 			<p class="note-text">
 				{{ note.excerpt }}
 			</p>
@@ -39,12 +39,13 @@ export default {
 	background-color: white;
 	border-radius: 0.5rem;
 	box-shadow: 0 0 0.15rem rgba(0, 0, 0, 0.25);
+	cursor: pointer;
 }
 
 .note-text {
 	overflow-x: hidden;
 	font-size: 1.125rem;
-	cursor: pointer;
+	
 }
 
 
